@@ -243,19 +243,6 @@
     padding-right: 17px;
   }
 
-  .sidebar.mobile-open {
-    visibility: visible;
-    transform: translateX(0);
-  }
-
-  .nav-scrim {
-    position: fixed;
-    inset: 0;
-    background: #00000070;
-    z-index: 25;
-    backdrop-filter: blur(2px);
-  }
-
   .brand {
     font-size: 26px;
     gap: 10px;

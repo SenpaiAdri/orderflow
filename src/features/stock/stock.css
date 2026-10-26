@@ -27,9 +27,9 @@
 }
 
 .inventory-item strong {
-  font-size: 13px;
-  color: var(--color-secondary);
-  font-weight: 450;
+  font-size: 14px;
+  color: var(--color-ink);
+  font-weight: 600;
 }
 
 .inventory-item small {

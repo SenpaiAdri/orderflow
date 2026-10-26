@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CircleAlert, Plus } from "lucide-react";
+import { CircleAlert, Download, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { AppLayout, type WorkspacePage } from "@/components/layout/AppLayout";
@@ -14,6 +14,8 @@ import {
   defaultOrderFilters,
   type OrderFilters,
 } from "@/features/orders/order-filters";
+import { exportOrders } from "@/features/orders/export-orders";
+import { filterOrders } from "@/features/orders/order-filters";
 import type { Order } from "@/lib/workflow";
 
 function App() {
@@ -71,10 +73,19 @@ function App() {
             </h1>
           </div>
           {page === "Orders" && (
-            <Button onClick={() => setCreateOpen(true)}>
-              <Plus size={16} />
-              New order
-            </Button>
+            <div className="page-actions flex items-center gap-2">
+              <Button variant="outline" aria-label="Download list" onClick={() => {
+                const visible = filterOrders(orders, filters);
+                exportOrders(visible);
+                setToast(`${visible.length} orders exported`);
+              }}>
+                <Download size={16} />
+                <span className="max-[700px]:sr-only">Download list</span>
+              </Button>
+              <Button onClick={() => setCreateOpen(true)}>
+                <Plus size={16} />New order
+              </Button>
+            </div>
           )}
         </div>
         {storageError && (
@@ -93,7 +104,6 @@ function App() {
             onFilterChange={changeFilters}
             onResetFilters={resetFilters}
             onOpen={setSelectedId}
-            notify={setToast}
           />
         ) : page === "Inventory" ? (
           <StockPage orders={orders} onOpen={setSelectedId} />

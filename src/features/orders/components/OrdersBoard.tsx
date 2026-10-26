@@ -6,6 +6,7 @@ import {
   total,
   type Order,
 } from "@/lib/workflow";
+import { DeliveryDue } from "./DeliveryDue";
 import { OrderAvatar } from "./OrderAvatar";
 import { StageIcon } from "./OrderStatus";
 
@@ -47,6 +48,8 @@ export function OrdersBoard({
                   </span>
                 </div>
                 <p>{nextAction(o)}</p>
+                <DeliveryDue order={o} compact />
+                <small className="board-owner">{o.owner}</small>
                 <footer>
                   <span>{money(total(o))}</span>
                   <ArrowRight size={13} />

@@ -9,15 +9,16 @@ export function ActivityPage({
   orders: Order[];
   onOpen: (id: string) => void;
 }) {
+  const activity = orders
+    .flatMap((order) => order.activity.map((entry) => ({ ...entry, order })))
+    .sort((a, b) => b.at.localeCompare(a.at));
   return (
     <section className="activity-page">
       <div className="section-title">
         <h2>Recent activity</h2>
       </div>
-      {orders
-        .flatMap((o) => o.activity.map((a) => ({ ...a, order: o })))
-        .sort((a, b) => b.at.localeCompare(a.at))
-        .map((a, i) => (
+      {!activity.length && <div className="empty-state"><History size={28} /><h3>No order updates yet</h3><p>Order changes will appear here.</p></div>}
+      {activity.map((a, i) => (
           <button
             className="activity-row"
             key={`${a.order.id}-${i}`}

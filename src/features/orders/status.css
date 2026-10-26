@@ -273,3 +273,7 @@
 .stock-good {
   color: var(--success-ink);
 }
+
+.due-brief { display: none; }
+.delivery-due.compact .due-full { display: none; }
+.delivery-due.compact .due-brief { display: inline; }

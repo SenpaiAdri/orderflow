@@ -1,0 +1,29 @@
+# UI review — October 26, 2026
+
+Two independent GPT-6.1 Sol reviewers evaluated the rendered interface and connected source across two rounds. These scores are expert judgments of this prototype, not results from operator usability studies.
+
+| Reviewer | Round 1 | Round 2 | Main reason for the improvement |
+| --- | --- | --- | --- |
+| A: hierarchy and space | 8.1/10 | 9.0/10 | More work visible on mobile, six desktop board stages visible, stronger text hierarchy |
+| B: task clarity and accessibility | 8.3/10 | 9.0/10 | Clearer queue, deadlines and owners retained on board, appropriate control semantics and modal navigation |
+
+## Findings and changes
+
+- **Excessive queue chrome:** merged Download list with New order in the page heading and removed the duplicate Order list heading. Mobile uses one native view selector; search and Filters share a row.
+- **Oversized mobile cards:** removed the repeated next-action label and placed the deadline alongside the amount. At 390 × 844, the first card starts at 258 px instead of 437 px; card height falls from about 337 px to 245 px. Two full orders are initially visible.
+- **Hidden board stages and missing urgency:** six columns fit the 1440 px desktop viewport. Every card shows its deadline and assigned owner. Smaller screens retain a horizontally scrollable board. Compact dates preserve their full timestamp and Philippine time in accessible labels and tooltips.
+- **Flat stock/history typography:** product names and activity descriptions use 14 px dark medium/bold text; identifiers and timestamps remain secondary.
+- **Clipped progress focus:** stage buttons use a rounded, contained focus outline.
+- **Mobile drawer keyboard gaps:** replaced the scrim/sidebar toggle with a Radix modal drawer. Opening moves focus inside; Tab stays inside; Escape closes it and returns focus to the trigger. The background is hidden from assistive technology while open.
+- **Incorrect queue tab semantics:** filters use a labeled button group with pressed states; mobile uses a labeled select.
+- **Empty history:** added an explicit empty state.
+
+Both reviewers found no remaining blocker to a 9 after inspecting the second-round screenshots and source. Reviewer A's optional clipped-search-placeholder finding was also fixed. The creation form remains scrollable because its fields are necessary; no filler was added to short stock lists.
+
+## Evidence and limits
+
+Each round covered Orders, board, Stock checks, Order history, payment, packing, delivery, completion, and creation on desktop, plus Orders, payment, and creation at 390 px. A further screenshot covered the mobile drawer.
+
+Root-agent browser verification covered drawer focus wrapping, Escape and focus return, background hiding, mobile attention selection, full deadline labels, and no page overflow at 320 px and 390 px. All six board columns fit at 1440 px. The filter panel scrolls when screen height is limited. The console showed no errors. The production build, 17 domain/filter tests, and whitespace checks passed.
+
+Reviewers inspected screenshots and source; they did not independently operate a screen reader. Physical-device testing, a full screen-reader audit, and studies with real operators remain outstanding. Workflow transition rules and the prototype's local-storage/integration boundaries remain unchanged.

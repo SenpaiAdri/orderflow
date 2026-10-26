@@ -115,3 +115,5 @@ The October 2026 workflow fixes were checked in Chrome DevTools at desktop and a
 The earlier UX simplification was checked at 1440 px and 390 px: stage filtering, board selection, filter dismissal and focus return, missing payment evidence, the two-action approval state, explicit stock saving, packing, delivery evidence, and completion. Temporary browser test changes were restored. Operator usability testing and a full screen reader audit remain outstanding.
 
 The subsequent polish removed demo chrome and sample-generation shortcuts. Browser checks verified receipt upload and approval readiness, unavailable seeded-file downloads, simplified packing details, and mobile navigation at 390 px without page overflow. Existing browser records were restored after verification.
+
+The two-round [UI review](./docs/UI_REVIEW.md) records both GPT-6.1 Sol reviewers' findings, changes, and final 9.0/10 scores. It also distinguishes screenshot/source review from browser interaction checks and outstanding operator testing.

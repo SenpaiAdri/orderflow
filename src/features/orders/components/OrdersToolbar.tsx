@@ -53,7 +53,7 @@ export function OrdersToolbar({
 
   return (
     <div className="order-controls">
-      <div className="tabs" role="tablist" aria-label="Order views">
+      <div className="tabs" role="group" aria-label="Order views">
         {(
           [
             "All orders",
@@ -63,8 +63,7 @@ export function OrdersToolbar({
           ] as const
         ).map((name) => (
           <button
-            role="tab"
-            aria-selected={tab === name}
+            aria-pressed={tab === name}
             key={name}
             onClick={() => {
               onFilterChange({ tab: name, stageFilter: null });
@@ -78,12 +77,21 @@ export function OrdersToolbar({
           </button>
         ))}
       </div>
+      <label className="mobile-order-view">
+        <span className="sr-only">Order view</span>
+        <select value={tab} onChange={(e) => onFilterChange({ tab: e.target.value as OrderFilters["tab"], stageFilter: null })}>
+          <option>All orders</option>
+          <option value="Needs attention">Needs attention ({attentionCount})</option>
+          <option>Assigned to me</option>
+          <option>Completed</option>
+        </select>
+      </label>
       <div className="table-tools">
         <div className="search-field">
           <Search size={15} />
           <input
             ref={searchRef}
-            placeholder="Search by order or customer"
+            placeholder="Search orders"
             aria-label="Search orders"
             value={query}
             onChange={(e) => onFilterChange({ query: e.target.value })}
@@ -95,9 +103,7 @@ export function OrdersToolbar({
             >
               <X size={13} />
             </button>
-          ) : (
-            <kbd>⌘ K</kbd>
-          )}
+          ) : null}
         </div>
         <div className="filter-wrap" ref={filterRef}>
           <Button

@@ -1,8 +1,7 @@
-import { Download, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { needsAttention, STAGES, type Order } from "@/lib/workflow";
 import { filterOrders, type OrderFilters } from "./order-filters";
-import { exportOrders } from "./export-orders";
 import { OrdersToolbar } from "./components/OrdersToolbar";
 import { OrdersTable } from "./components/OrdersTable";
 import { OrdersBoard } from "./components/OrdersBoard";
@@ -15,7 +14,6 @@ export function OrdersPage({
   onFilterChange,
   onResetFilters,
   onOpen,
-  notify,
 }: {
   orders: Order[];
   filters: OrderFilters;
@@ -24,30 +22,11 @@ export function OrdersPage({
   onFilterChange: (patch: Partial<OrderFilters>) => void;
   onResetFilters: () => void;
   onOpen: (id: string) => void;
-  notify: (message: string) => void;
 }) {
   const visible = filterOrders(orders, filters);
   return (
     <>
-      <section className="orders-section">
-        <div className="section-title orders-title">
-          <h2>
-            Order list <span className="count-pill">{visible.length}</span>
-          </h2>
-          <div className="section-actions">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                exportOrders(visible);
-                notify(`${visible.length} orders exported`);
-              }}
-            >
-              <Download size={14} />
-              Download list
-            </Button>
-          </div>
-        </div>
+      <section className="orders-section" aria-label="Order queue">
         <OrdersToolbar
           filters={filters}
           onFilterChange={onFilterChange}

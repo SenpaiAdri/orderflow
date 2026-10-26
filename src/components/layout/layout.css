@@ -1,68 +1,27 @@
-h1 {
-  margin: 0;
-}
-
 .main-shell {
   width: calc(100% - 230px);
   margin-left: 230px;
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
 }
 
 .topbar {
-  height: 73px;
+  height: 56px;
   border-bottom: 1px solid var(--color-line);
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: var(--color-surface);
-  padding: 0 36px;
+  padding: 0 28px;
 }
 
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 13px;
-  color: var(--color-secondary);
-}
-
-.breadcrumb strong {
-  font-weight: 500;
-  color: var(--color-ink);
-}
-
-.breadcrumb svg {
-  color: var(--color-secondary);
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 21px;
-}
-
-.icon-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-  color: var(--color-ink);
-}
-
-.top-avatar {
-  width: 30px;
-  height: 30px;
-  font-size: 13px;
-}
-
-.mobile-menu {
-  display: none;
-}
+.breadcrumb { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.breadcrumb strong { font-weight: 500; }
+.top-avatar { width: 30px; height: 30px; font-size: 13px; }
+.icon-button { display: flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; }
+.mobile-menu { display: none; }
 
 main {
-  padding: 33px 36px 15px;
+  padding: 24px 28px;
   max-width: 1700px;
   width: 100%;
   margin: 0 auto;
@@ -72,152 +31,42 @@ main {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 29px;
-  gap: 15px;
+  margin-bottom: 20px;
+  gap: 16px;
 }
 
-h1 {
-  font-size: 27px;
-  font-weight: 600;
-  letter-spacing: -1px;
-  color: var(--color-ink);
-  line-height: 1.25;
-}
+h1 { margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -1px; line-height: 1.25; }
+.page-actions .ui-button { min-height: 44px; }
 
-@media (min-width: 1600px) {
-  main {
-    padding-top: 42px;
-  }
-
-  .page-heading {
-    margin-bottom: 34px;
-  }
-
-  h1 {
-    font-size: 32px;
-  }
+.mobile-navigation .sidebar {
+  position: static;
+  width: 100%;
+  height: 100%;
+  padding: 64px 17px 0;
+  visibility: visible;
+  transform: none;
+  overflow-y: auto;
 }
 
 @media (max-width: 1250px) {
-  .main-shell {
-    width: calc(100% - 205px);
-    margin-left: 205px;
-  }
-
-  .topbar {
-    padding: 0 25px;
-  }
-
-  main {
-    padding: 28px 25px 15px;
-  }
+  .main-shell { width: calc(100% - 205px); margin-left: 205px; }
+  main { padding: 24px; }
+  .topbar { padding: 0 24px; }
 }
 
 @media (max-width: 950px) {
-  .main-shell {
-    margin-left: 185px;
-    width: calc(100% - 185px);
-  }
-
-  main {
-    padding: 25px 20px 15px;
-  }
-
-  .topbar {
-    padding: 0 20px;
-    height: 62px;
-  }
-
-  h1 {
-    font-size: 23px;
-  }
-
-  .topbar-right {
-    gap: 14px;
-  }
-
-  .page-heading {
-    gap: 10px;
-  }
-
-  .page-heading > .ui-button {
-    font-size: 13px;
-    min-height: 33px;
-    padding: 0 10px;
-  }
+  .main-shell { width: calc(100% - 185px); margin-left: 185px; }
+  main { padding: 20px; }
+  .topbar { padding: 0 20px; }
 }
 
 @media (max-width: 700px) {
-  .main-shell {
-    margin: 0;
-    width: 100%;
-  }
-
-  .mobile-menu {
-    display: flex;
-  }
-
-  .breadcrumb {
-    gap: 10px;
-  }
-
-  .topbar {
-    padding: 0 18px;
-  }
-
-  .topbar-right {
-    gap: 14px;
-  }
-
-  main {
-    padding: 25px 16px 12px;
-  }
-
-  .page-heading {
-    align-items: flex-start;
-  }
-
-  .page-heading > .ui-button {
-    margin-top: 29px;
-  }
-
-  h1 {
-    font-size: 22px;
-    max-width: 245px;
-  }
-}
-
-h1 {
-  font-size: 32px;
-  letter-spacing: -1px;
-}
-
-.page-heading > .ui-button {
-  min-height: 44px;
-  font-size: 14px;
-}
-
-.icon-button {
-  min-width: 40px;
-  min-height: 40px;
-}
-
-@media (max-width: 950px) {
-  .page-heading {
-    margin-bottom: 24px;
-  }
-}
-
-@media (max-width: 700px) {
-  h1 {
-    font-size: 28px;
-  }
-
-  .page-heading {
-    flex-wrap: wrap;
-  }
-
-  .page-heading > .ui-button {
-    margin-top: 0;
-  }
+  .desktop-sidebar { display: none; }
+  .main-shell { width: 100%; margin: 0; }
+  .mobile-menu { display: flex; }
+  .topbar { padding: 0 12px; }
+  main { padding: 20px 16px; }
+  h1 { font-size: 26px; }
+  .page-heading { gap: 8px; margin-bottom: 16px; }
+  .page-actions .ui-button { padding: 0 12px; }
 }

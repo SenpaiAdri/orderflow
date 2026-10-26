@@ -9,19 +9,17 @@ import type { WorkspacePage } from "./AppLayout";
 
 export function Sidebar({
   page,
-  mobileOpen,
   orderCount,
   onHome,
   onNavigate,
 }: {
   page: WorkspacePage;
-  mobileOpen: boolean;
   orderCount: number;
   onHome: () => void;
   onNavigate: (page: WorkspacePage) => void;
 }) {
   return (
-    <aside className={`sidebar ${mobileOpen ? "mobile-open" : ""}`}>
+    <aside className="sidebar">
       <a
         className="brand"
         href="#"

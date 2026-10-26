@@ -14,7 +14,7 @@ Three workspace destinations reflect operational jobs. The interface labels Inve
 | Inventory   | What is blocking preparation?      | Order-specific stock requirements and shortages     |
 | Activity    | What changed, and who approved it? | Timestamped decisions, notes, and handoffs          |
 
-The Orders screen leads with New order and a secondary Download list action. One set of queue tabs provides All orders, Needs attention, Assigned to me, and Completed. Search stays visible; owner, priority, stage, and list/board settings share one Filters disclosure. Duplicate count cards and pipeline filters are removed. Each order has one action to open its next task. On phones, rows become labeled cards without horizontal scrolling.
+The Orders screen leads with New order and a secondary Download list action. One set of queue controls provides All orders, Needs attention, Assigned to me, and Completed. Desktop uses a button group; mobile uses a native selector. Search stays visible; owner, priority, stage, and list/board settings share one Filters disclosure. Duplicate count cards and pipeline filters are removed. Each order has one action to open its next task. On phones, rows become compact cards with deadline and amount on the same row. The full timestamp remains available in the date label.
 
 The detail dialog preserves the user's place in the queue. It keeps the order identifier and current status visible while the content scrolls. A handoff footer appears only on the current Details step when its prerequisites are ready. The owner appears beside the order identity and in the queue. On opening, keyboard focus moves to the current stage; the progress strip scrolls to keep the selected step visible on phones.
 
@@ -52,7 +52,7 @@ The approval footer offers one forward action with a separate confirmation. When
 
 ## Cognitive load and hierarchy
 
-- The default is a scan-friendly list. A board is optional for people who think spatially about the pipeline.
+- The default is a scan-friendly list. A board fits all six stages on wide desktop screens and scrolls horizontally on smaller screens. Its cards retain deadline and owner context.
 - Blockers and urgency appear alongside the next action, so users can decide without opening every order.
 - All views derive their counts from the same order collection. Moving an order updates the pipeline, queue, dashboard, and history.
 - White surfaces, black primary actions, dark body text, and gray borders keep the interface neutral. Muted slate, amber, teal, purple, blue, and green connect stage badges, action links, stage filters, and order details. Light tints group statuses without coloring entire table rows. Muted red highlights overdue deliveries and urgency; amber marks deliveries due today and missing prerequisites; green marks completed delivery. Labels and explicit blocker messages keep status understandable without color.
@@ -63,6 +63,7 @@ The approval footer offers one forward action with a separate confirmation. When
 - Search, owner, priority, and stage filters combine. An empty result provides a clear reset.
 - Intake asks for essentials first. Evidence and operational confirmations appear at the stage that needs them.
 - Delivery deadlines are stored as timestamps and displayed in Philippine time. Overdue detection uses the current time, refreshes every minute, and breaks equal-urgency overdue ties by the oldest deadline. Existing relative labels migrate using the earliest recorded activity date as an approximation.
+- Mobile navigation uses a modal drawer with managed focus, Escape dismissal, and focus return. Stage progress uses a contained focus ring.
 - Motion is limited to small interface transitions and honors reduced-motion preferences.
 
 ## Implementation structure

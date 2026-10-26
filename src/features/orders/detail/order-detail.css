@@ -454,3 +454,13 @@
 .order-dialog:has(.confirm-action) .detail-scroll {
   display: none;
 }
+
+.detail-pipeline button {
+  border-radius: 6px;
+  min-height: 60px;
+}
+
+.detail-pipeline button:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: -3px;
+}

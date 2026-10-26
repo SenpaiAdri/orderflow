@@ -315,3 +315,24 @@ td,
     font-size: 13px;
   }
 }
+
+@media (max-width: 700px) {
+  tbody tr {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    padding: 14px 0;
+  }
+
+  td:nth-child(4)::before,
+  td:nth-child(6)::before { display: none; }
+
+  td:nth-child(5) { grid-column: 1; min-width: 0; }
+  td:nth-child(6) { grid-column: 2; align-self: end; text-align: right; }
+  td:nth-child(5)::before { content: "Delivery due (PHT)"; }
+  .delivery-due { padding: 3px 0; white-space: normal; }
+  .delivery-due .due-full { display: none; }
+  .delivery-due .due-brief { display: inline; }
+  .delivery-due.due-overdue,
+  .delivery-due.due-today { padding: 3px 6px; }
+  .next-action { min-height: 44px; }
+}
