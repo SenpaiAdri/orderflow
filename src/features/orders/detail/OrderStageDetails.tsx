@@ -109,6 +109,7 @@ export function DeliveryDetails({
           <label className="field-label">
             Delivery reference
             <input
+              name="delivery-reference"
               value={order.tracking}
               onChange={(e) => update({ ...order, tracking: e.target.value })}
               placeholder="e.g. LAL-8401"

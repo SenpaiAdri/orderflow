@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { ArrowRight, ClipboardList, Plus } from "lucide-react";
+import { ArrowRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DialogContent,
@@ -69,13 +69,8 @@ export function CreateOrder({
   return (
     <DialogContent className="create-dialog">
       <div className="create-heading">
-        <span className="create-icon">
-          <ClipboardList size={23} />
-        </span>
         <DialogTitle>New order</DialogTitle>
-        <DialogDescription>
-          Fields marked * are required.
-        </DialogDescription>
+        <DialogDescription className="sr-only">Customer, items, and delivery details.</DialogDescription>
       </div>
       <form onSubmit={submit}>
         <CustomerFields value={customerDetails} onChange={setCustomerDetails} />
@@ -118,7 +113,6 @@ export function CreateOrder({
         <Button className="w-full" type="submit">
           Create order <ArrowRight size={16} />
         </Button>
-
       </form>
     </DialogContent>
   );

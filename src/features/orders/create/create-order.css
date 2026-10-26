@@ -4,31 +4,11 @@
   max-width: 530px;
 }
 
-.create-icon {
-  width: 43px;
-  height: 43px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-line);
-  background: var(--color-canvas);
-  color: var(--color-secondary);
-  border-radius: 10px;
-  margin-bottom: 19px;
-}
-
 .create-heading h2 {
   font-size: 23px;
   color: var(--color-ink);
   font-weight: 550;
   letter-spacing: -0.6px;
-}
-
-.create-heading > p {
-  font-size: 13px;
-  color: var(--color-secondary);
-  line-height: 1.8;
-  margin: 9px 0 22px;
 }
 
 .create-total {
@@ -57,12 +37,13 @@
   .create-heading h2 {
     font-size: 21px;
   }
-
-  .create-heading > p {
-    font-size: 13px;
-  }
 }
 
 .create-heading h2 {
   font-size: 26px;
+}
+
+.create-heading {
+  padding-right: 36px;
+  margin-bottom: 24px;
 }

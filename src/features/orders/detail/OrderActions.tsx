@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, CheckCircle2, Download, ShieldCheck } from "lucide-react";
+import { ArrowRight, Download, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatTime } from "@/lib/format";
 import {
@@ -17,11 +17,13 @@ export function OrderActions({
   update,
   notify,
   onError,
+  onEdit,
 }: {
   order: Order;
   update: (order: Order) => void;
   notify: (message: string) => void;
   onError: (message: string) => void;
+  onEdit: () => void;
 }) {
   const [confirm, setConfirm] = useState(false);
   useEffect(() => {
@@ -38,16 +40,12 @@ export function OrderActions({
     }
   }
 
-  if (order.stage < 5 && !check.ready) return null;
+  if (order.stage > 0 && order.stage < 5 && !check.ready) return null;
 
   return (
     <div className="detail-footer">
       {order.stage === 5 ? (
         <>
-          <span className="complete-footer">
-            <CheckCircle2 size={17} />
-            All six stages completed
-          </span>
           <Button
             onClick={() => {
               const blob = new Blob(
@@ -85,11 +83,10 @@ export function OrderActions({
         </div>
       ) : (
         <>
-          <span className="footer-step">
-            <span>Step {order.stage + 1} of 6</span>
-            {STAGES[order.stage]}
-          </span>
+          {!check.ready && <p className="stage-validation" role="status">{check.reason}</p>}
+          {order.stage === 0 && <Button variant="outline" onClick={onEdit}>Edit order details</Button>}
           <Button
+            disabled={!check.ready}
             onClick={() => setConfirm(true)}
             title={check.reason || ACTIONS[order.stage]}
           >

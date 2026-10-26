@@ -75,7 +75,7 @@ The existing shadcn/ui Button and Dialog primitives use Tailwind utilities, with
 - Immediate tasks shared by the list, board, and order details: resolve missing prerequisites before the handoff action. Completed steps show read-only evidence and approval summaries.
 - Payment evidence, stock shortage resolution, preparation confirmation, and delivery proof.
 - Upload and download attachments, using PDF, PNG, JPG, or text files up to 2 MB.
-- Documents provides one upload action. Downloads are available for stored files; seeded records without a file show Original file unavailable.
+- Stage evidence views show the required document type and return to the task after upload. The general Documents archive retains its type selector. Downloads are available for stored files; seeded records without a file show Original file unavailable.
 - Notes, per-order history, a workspace activity feed, and inventory exceptions.
 - CSV export of the currently filtered order list; downloadable completed-order summaries.
 - Browser persistence, responsive layouts, reduced-motion support, and a search keyboard shortcut.

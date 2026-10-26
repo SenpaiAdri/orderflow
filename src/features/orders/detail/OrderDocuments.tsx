@@ -11,6 +11,8 @@ export function OrderDocuments({
   onError,
   uploadType,
   onUploadTypeChange,
+  onUploaded,
+  contextType,
 }: {
   order: Order;
   active: boolean;
@@ -19,8 +21,12 @@ export function OrderDocuments({
   onError: (message: string) => void;
   uploadType: Attachment["type"];
   onUploadTypeChange: (type: Attachment["type"]) => void;
+  onUploaded: (type: Attachment["type"]) => void;
+  contextType: Attachment["type"] | null;
 }) {
   const [uploading, setUploading] = useState(false);
+  const attachments = contextType ? order.attachments.filter((file) => file.type === contextType) : order.attachments;
+  const heading = contextType === "receipt" ? "Payment receipt" : contextType === "delivery" ? "Delivery proof" : "Documents";
   const fileRef = useRef<HTMLInputElement>(null);
   async function upload(file: File | undefined) {
     if (!file) return;
@@ -55,6 +61,7 @@ export function OrderDocuments({
         `${file.name} attached by Alex Morgan`,
       );
       notify("Attachment added");
+      onUploaded(uploadType);
     } catch {
       onError("Unable to read that file. Please try again.");
     } finally {
@@ -73,11 +80,11 @@ export function OrderDocuments({
   return (
     <section className="detail-section attachment-section" hidden={!active}>
       <h3>
-        Documents {order.attachments.length > 0 && <span>{order.attachments.length} {order.attachments.length === 1 ? "file" : "files"}</span>}
+        {heading} {attachments.length > 0 && <span>{attachments.length} {attachments.length === 1 ? "file" : "files"}</span>}
       </h3>
 
-      {order.attachments.map((a, i) => (
-        <div className="attachment" key={`${a.name}-${i}`}>
+      {attachments.map((a, i) => (
+        <div className="attachment" data-document-type={a.type} key={`${a.name}-${i}`}>
           <span className="file-icon">
             <FileText size={19} />
           </span>
@@ -103,13 +110,13 @@ export function OrderDocuments({
           </Button>
         </div>
       ))}
-      {!order.attachments.length && (
+      {!attachments.length && (
         <div className="empty-attachments">
           <p>No documents attached.</p>
         </div>
       )}
       <div className="upload-box">
-        <label className="field-label w-full">
+        {!contextType && <label className="field-label w-full">
           Document type
           <select
             value={uploadType}
@@ -119,7 +126,7 @@ export function OrderDocuments({
             <option value="delivery">Proof of delivery</option>
             <option value="other">Other document</option>
           </select>
-        </label>
+        </label>}
         <Button
           size="sm"
           disabled={uploading}

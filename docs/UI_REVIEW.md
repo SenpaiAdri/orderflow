@@ -27,3 +27,24 @@ Each round covered Orders, board, Stock checks, Order history, payment, packing,
 Root-agent browser verification covered drawer focus wrapping, Escape and focus return, background hiding, mobile attention selection, full deadline labels, and no page overflow at 320 px and 390 px. All six board columns fit at 1440 px. The filter panel scrolls when screen height is limited. The console showed no errors. The production build, 17 domain/filter tests, and whitespace checks passed.
 
 Reviewers inspected screenshots and source; they did not independently operate a screen reader. Physical-device testing, a full screen-reader audit, and studies with real operators remain outstanding. Workflow transition rules and the prototype's local-storage/integration boundaries remain unchanged.
+
+## Subsequent desktop order-flow pass
+
+This pass followed one order through all six stages at 1440 × 1000. It did not introduce a new reviewer score.
+
+| Stage | Main action | Secondary action | Information in focus |
+| --- | --- | --- | --- |
+| Intake | Confirm order | Edit order details | Items and delivery requirements |
+| Payment | Attach receipt, then Approve payment | Review receipt once attached | Expected payment and receipt |
+| Stock check | Save shortage quantities, then Reserve stock | None | Required versus available stock |
+| Packing | Confirm packing, then Mark ready for delivery | None | Items and packing confirmation |
+| Delivery | Attach proof, then Complete order once ready | Review proof once attached | Recipient/address and delivery reference/evidence |
+| Completed | Download summary | Review delivery proof | Completion timestamp and delivery record |
+
+Navigation, disclosures, form choices, and the standard dialog dismissal remain separate from task actions. Approval confirmation shows only Go back and the handoff action.
+
+Intake editing now shares the action footer with confirmation. Contextual evidence views show only the requested evidence type and omit the redundant type selector. Successful contextual uploads return to Details and focus the handoff, or the delivery reference when still missing. The general Documents archive retains its type selector and stays open after an upload. Each handoff resets scroll and focuses the new stage. Saving replenished stock focuses Reserve stock. Intake edit cancellation returns focus to Edit order details.
+
+Completion now shows its actual recorded approval timestamp, address, and reference without requiring a disclosure. Operational notes remain visible at intake, packing, and delivery; other stages keep them with supporting information. The creation icon and repeated footer status helpers were removed.
+
+Browser verification created a temporary order, corrected its quantity, uploaded a receipt, resolved a shortage, confirmed packing, uploaded delivery proof before entering its missing reference, and completed all five guarded handoffs. Completion retained all five approval records after refresh. Past payment inspection exposed its recorded approval and no current handoff. Evidence review filtered out unrelated documents; the general archive remained available. Temporary order and upload data were restored afterward. Build, 17 tests, and whitespace checks passed. This pass focused on desktop; mobile and full screen-reader testing were not repeated.

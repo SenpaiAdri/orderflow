@@ -31,17 +31,39 @@ export function OrderDetail({
   const [error, setError] = useState("");
   const [inspected, setInspected] = useState<number>(order.stage);
   const [editing, setEditing] = useState(false);
+  const [returnToStage, setReturnToStage] = useState<Attachment["type"] | null>(null);
   const [uploadType, setUploadType] = useState<Attachment["type"]>(order.stage >= 4 ? "delivery" : "receipt");
   useEffect(() => {
     setInspected(order.stage);
     setDetailTab("Overview");
     setEditing(false);
     setError("");
+    setReturnToStage(null);
+    const frame = requestAnimationFrame(() => {
+      const scroll = contentRef.current?.querySelector(".detail-scroll");
+      if (scroll) scroll.scrollTop = 0;
+      contentRef.current?.querySelector<HTMLButtonElement>(".detail-pipeline .current")?.focus();
+    });
     setUploadType(order.stage >= 4 ? "delivery" : "receipt");
+    return () => cancelAnimationFrame(frame);
   }, [order.stage, order.id]);
   function openDocuments(type: Attachment["type"]) {
     setUploadType(type);
+    setReturnToStage(type);
     setDetailTab("Attachments");
+    requestAnimationFrame(() => {
+      const evidence = contentRef.current?.querySelector<HTMLButtonElement>(`.attachment[data-document-type="${type}"] button:not([disabled])`);
+      const upload = contentRef.current?.querySelector<HTMLButtonElement>(".upload-box button");
+      (evidence ?? upload)?.focus();
+    });
+  }
+  function focusTask() {
+    requestAnimationFrame(() => {
+      const action = contentRef.current?.querySelector<HTMLButtonElement>(".detail-footer button:last-child");
+      const reference = contentRef.current?.querySelector<HTMLInputElement>("input[name='delivery-reference']");
+      const selected = contentRef.current?.querySelector<HTMLButtonElement>(".detail-pipeline .viewing");
+      (action ?? reference ?? selected)?.focus();
+    });
   }
   function logChange(patch: Partial<Order>, text: string) {
     update({
@@ -49,6 +71,10 @@ export function OrderDetail({
       ...patch,
       activity: [{ text, at: new Date().toISOString() }, ...order.activity],
     });
+    if (patch.items && order.stage === 2) {
+      notify("Stock quantities saved");
+      if (patch.items.every((item) => item.stock >= item.qty)) focusTask();
+    }
   }
   function addNote(e: FormEvent) {
     e.preventDefault();
@@ -92,9 +118,9 @@ export function OrderDetail({
         {!editing && <OrderProgress
           stage={order.stage}
           inspected={inspected}
-          onInspect={(stage) => { setInspected(stage); setDetailTab("Overview"); }}
+          onInspect={(stage) => { setInspected(stage); setDetailTab("Overview"); setReturnToStage(null); setError(""); }}
         />}
-        {!editing && <div className="detail-tabs">
+        {!editing && <div className="detail-tabs" role="group" aria-label="Order sections">
           {[
             { value: "Overview", label: "Details" },
             { value: "Attachments", label: "Documents" },
@@ -103,14 +129,18 @@ export function OrderDetail({
             <button
               key={value}
               className={detailTab === value ? "active" : ""}
-              onClick={() => setDetailTab(value)}
+              aria-pressed={detailTab === value}
+              onClick={() => { setDetailTab(value); setReturnToStage(null); setError(""); }}
             >
               {label}
             </button>
           ))}
         </div>}
-        {editing && <IntakeEditor order={order} onCancel={() => setEditing(false)} onSave={(next) => {
-          update(next); setEditing(false); notify("Order details saved");
+        {editing && <IntakeEditor order={order} onCancel={() => {
+          setEditing(false);
+          requestAnimationFrame(() => contentRef.current?.querySelector<HTMLButtonElement>(".detail-footer button:first-child")?.focus());
+        }} onSave={(next) => {
+          update(next); setEditing(false); notify("Order details saved"); focusTask();
         }} />}
         {!editing && detailTab === "Overview" && (
           <OrderOverview
@@ -119,7 +149,6 @@ export function OrderDetail({
             logChange={logChange}
             update={update}
             onDocuments={openDocuments}
-            onEdit={() => setEditing(true)}
           />
         )}
         <OrderDocuments
@@ -127,6 +156,14 @@ export function OrderDetail({
           active={!editing && detailTab === "Attachments"}
           uploadType={uploadType}
           onUploadTypeChange={setUploadType}
+          contextType={returnToStage}
+          onUploaded={(type) => {
+            if (type === returnToStage) {
+              setDetailTab("Overview");
+              setReturnToStage(null);
+              focusTask();
+            }
+          }}
           logChange={logChange}
           notify={notify}
           onError={setError}
@@ -146,6 +183,7 @@ export function OrderDetail({
         update={update}
         notify={notify}
         onError={setError}
+        onEdit={() => setEditing(true)}
       />}
     </DialogContent>
   );

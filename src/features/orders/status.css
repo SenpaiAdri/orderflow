@@ -116,7 +116,6 @@
 }
 
 .completed-banner > svg,
-.complete-footer > svg,
 .toast > svg {
   color: var(--status-completed);
 }
@@ -263,8 +262,7 @@
   background: var(--success-soft);
   border-color: #cfe1d2;
 }
-.completed-banner strong,
-.complete-footer {
+.completed-banner strong {
   color: var(--success-ink);
 }
 .stock-short {

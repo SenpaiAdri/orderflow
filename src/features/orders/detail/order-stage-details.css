@@ -274,3 +274,8 @@
 .stock-resolution > .ui-button {
   margin-top: 14px;
 }
+
+.address-row + .field-label,
+.address-row + .field-hint {
+  margin-top: 16px;
+}
