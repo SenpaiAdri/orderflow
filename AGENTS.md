@@ -5,7 +5,7 @@ React + Vite + TypeScript operations prototype. Read README.md and DESIGN.md for
 ## Commands
 
 - `npm run dev`: local Vite app.
-- `npm test`: domain tests through the public workflow functions.
+- `npm test`: workflow and order-filter tests through public functions.
 - `npm run build`: strict TypeScript checks and production bundle.
 - `npm exec -- chrome-devtools-mcp --version`: installed browser tool version.
 

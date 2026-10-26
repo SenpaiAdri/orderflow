@@ -7,6 +7,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { money, type Order } from "@/lib/workflow";
+import { CustomerFields, type CustomerDetails } from "./CustomerFields";
 export function CreateOrder({
   onCreate,
   nextId,
@@ -14,10 +15,13 @@ export function CreateOrder({
   onCreate: (o: Order) => void;
   nextId: string;
 }) {
-  const [customer, setCustomer] = useState("");
-  const [company, setCompany] = useState("");
-  const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
+  const [customerDetails, setCustomerDetails] = useState<CustomerDetails>({
+    customer: "",
+    company: "",
+    email: "",
+    address: "",
+  });
+  const { customer, company, email, address } = customerDetails;
   const [quantity, setQuantity] = useState(6);
   const [product, setProduct] = useState("mug");
   const [priority, setPriority] = useState<"normal" | "urgent">("normal");
@@ -83,52 +87,12 @@ export function CreateOrder({
         </span>
         <DialogTitle>New order</DialogTitle>
         <DialogDescription>
-          Enter the customer, items, and delivery details. Fields marked * are required.
+          Enter the customer, items, and delivery details. Fields marked * are
+          required.
         </DialogDescription>
       </div>
       <form onSubmit={submit}>
-        <div className="form-grid">
-          <label className="field-label">
-            Customer name <span>*</span>
-            <input
-              required
-              maxLength={80}
-              autoComplete="name"
-              value={customer}
-              onChange={(e) => setCustomer(e.target.value)}
-              placeholder="e.g. Isabel Santos"
-            />
-          </label>
-          <label className="field-label">
-            Company (optional)
-            <input
-              maxLength={80}
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
-              placeholder="Company or business name"
-            />
-          </label>
-        </div>
-        <label className="field-label">
-          Email address (optional)
-          <input
-            type="email"
-            maxLength={120}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="customer@example.com"
-          />
-        </label>
-        <label className="field-label">
-          Delivery address <span>*</span>
-          <input
-            required
-            maxLength={250}
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            placeholder="Street, city, province"
-          />
-        </label>
+        <CustomerFields value={customerDetails} onChange={setCustomerDetails} />
         <div className="form-grid product-fields">
           <label className="field-label">
             Product
@@ -193,7 +157,9 @@ export function CreateOrder({
         <Button className="full-width" type="submit">
           Create order <ArrowRight size={16} />
         </Button>
-        <p className="form-caption">Assigned to you. Review the details after creating the order.</p>
+        <p className="form-caption">
+          Assigned to you. Review the details after creating the order.
+        </p>
       </form>
     </DialogContent>
   );

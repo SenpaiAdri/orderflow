@@ -49,7 +49,7 @@ The approval footer offers one forward action with a separate confirmation. When
 - The default is a scan-friendly list. A board is optional for people who think spatially about the pipeline.
 - Blockers and urgency appear alongside the next action, so users can decide without opening every order.
 - All views derive their counts from the same order collection. Moving an order updates the pipeline, queue, dashboard, and history.
-- A monochrome palette uses white surfaces, black primary actions, dark body text, and gray borders. Status names and icons, bold urgency labels, and explicit blocker messages distinguish states without color.
+- White surfaces, black primary actions, dark body text, and gray borders keep the interface neutral. Muted slate, amber, teal, purple, blue, and green connect stage badges, action links, stage filters, and order details. Light tints group statuses without coloring entire table rows. Muted red highlights overdue deliveries and urgency; amber marks deliveries due today and missing prerequisites; green marks completed delivery. Labels and explicit blocker messages keep status understandable without color.
 - Body and table text use a system sans-serif font, with 14 px main text and a 13 px minimum for supporting text. Decorative subtitles, fabricated charts, and promotional copy are removed.
 - Search, owner, priority, and stage filters combine. An empty result provides a clear reset.
 - Intake asks for essentials first. Evidence and operational confirmations appear at the stage that needs them.
@@ -60,11 +60,17 @@ The approval footer offers one forward action with a separate confirmation. When
 - `src/lib/workflow.ts`: typed domain model, readiness checks, transitions, totals, and attention detection.
 - `src/lib/workflow.test.ts`: domain tests, including the complete journey and blocked transitions.
 - `src/data/orders.ts`: fictional demonstration records across all six stages.
-- `src/components/OrderDetail.tsx`: contextual order workspace, evidence, history, and approvals.
-- `src/components/CreateOrder.tsx`: minimal intake form.
-- `src/components/Inventory.tsx`: stock exceptions.
+- `src/features/orders/detail/`: contextual order workspace composed from progress, overview, items, stage-specific details, documents, history, notes, and approval actions.
+- `src/features/orders/create/`: minimal intake form and customer fields.
+- `src/features/stock/`: stock exceptions and order cards.
+- `src/features/activity/`: workspace history.
+- `src/features/orders/components/`: list and board views, filters, summaries, and shared status/avatar components.
+- `src/features/orders/order-filters.ts`: search, combined filters, and queue sorting, covered by public-function tests.
+- `src/features/orders/useOrders.ts`: loading, saving, and updating orders using the existing browser-storage key.
+- `src/features/orders/status.css`: one muted palette for stage badges, action links, delivery dates, stage filters, and order details.
+- `src/components/layout/`, `help/`, and `feedback/`: workspace navigation, help, and notifications.
 - `src/components/ui/`: reusable shadcn-style primitives using Radix.
-- `src/App.tsx`: workspace navigation, queue, filters, exports, and local persistence.
+- `src/App.tsx`: shared state, page selection, and dialog coordination.
 
 ## Production boundary
 

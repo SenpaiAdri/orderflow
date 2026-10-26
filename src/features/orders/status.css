@@ -1,0 +1,232 @@
+/* Muted stage colors pair light surfaces with readable labels and icons. */
+:root {
+  --status-new: #687c91;
+  --status-payment: #9d793b;
+  --status-stock: #4e847b;
+  --status-packing: #89729a;
+  --status-delivery: #587fa4;
+  --status-completed: #56816a;
+}
+
+.stage-icon[data-stage="0"] {
+  color: var(--status-new);
+}
+.stage-icon[data-stage="1"] {
+  color: var(--status-payment);
+}
+.stage-icon[data-stage="2"] {
+  color: var(--status-stock);
+}
+.stage-icon[data-stage="3"] {
+  color: var(--status-packing);
+}
+.stage-icon[data-stage="4"] {
+  color: var(--status-delivery);
+}
+.stage-icon[data-stage="5"] {
+  color: var(--status-completed);
+}
+
+.summary-top .overview-orders {
+  color: var(--status-new);
+}
+.summary-top .overview-attention {
+  color: var(--status-payment);
+}
+.summary-top .overview-delivery {
+  color: var(--status-delivery);
+}
+.summary-top .overview-completed,
+.completed-banner > svg,
+.complete-footer > svg,
+.toast > svg {
+  color: var(--status-completed);
+}
+.next-step-card.blocked .next-step-icon {
+  color: var(--status-payment);
+}
+
+/* A stage uses the same tint in the list, board, stage filters, and details. */
+.stage-0,
+[data-stage="0"] {
+  --stage-ink: #4e6379;
+  --stage-soft: #f0f4f8;
+  --stage-line: #d4dfe9;
+  --stage-accent: var(--status-new);
+}
+.stage-1,
+[data-stage="1"] {
+  --stage-ink: #815d25;
+  --stage-soft: #fbf5e9;
+  --stage-line: #e9d9b7;
+  --stage-accent: var(--status-payment);
+}
+.stage-2,
+[data-stage="2"] {
+  --stage-ink: #356e63;
+  --stage-soft: #edf6f3;
+  --stage-line: #cbe1da;
+  --stage-accent: var(--status-stock);
+}
+.stage-3,
+[data-stage="3"] {
+  --stage-ink: #74588b;
+  --stage-soft: #f5f0f8;
+  --stage-line: #e0d4e8;
+  --stage-accent: var(--status-packing);
+}
+.stage-4,
+[data-stage="4"] {
+  --stage-ink: #416b94;
+  --stage-soft: #edf4fb;
+  --stage-line: #cfdeee;
+  --stage-accent: var(--status-delivery);
+}
+.stage-5,
+[data-stage="5"] {
+  --stage-ink: #3c7352;
+  --stage-soft: #edf6ee;
+  --stage-line: #cfe1d2;
+  --stage-accent: var(--status-completed);
+}
+:root {
+  --attention-ink: #8a601e;
+  --attention-soft: #fbf4e7;
+  --attention-line: #ead8b6;
+  --danger-ink: #a6473e;
+  --danger-soft: #fbefed;
+  --success-ink: #3c7352;
+  --success-soft: #edf6ee;
+}
+.status[data-stage] {
+  color: var(--stage-ink);
+  background: var(--stage-soft);
+  border-color: var(--stage-line);
+  font-weight: 550;
+}
+.orders-section [data-stage] .next-action,
+.orders-section [data-stage] .next-action svg {
+  color: var(--stage-ink);
+}
+.orders-section .action-sub {
+  color: var(--attention-ink);
+}
+.priority.urgent,
+.board-card .urgent-text {
+  color: var(--danger-ink);
+  background: var(--danger-soft);
+  border-radius: 4px;
+  padding: 2px 6px;
+  width: fit-content;
+}
+.priority.urgent > span {
+  background: var(--danger-ink);
+}
+.delivery-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.delivery-due.due-overdue {
+  color: var(--danger-ink);
+  background: var(--danger-soft);
+  font-weight: 650;
+}
+.delivery-due.due-today {
+  color: var(--attention-ink);
+  background: var(--attention-soft);
+}
+.delivery-due.due-delivered {
+  color: var(--success-ink);
+  background: var(--success-soft);
+}
+.delivery-due.due-upcoming {
+  color: var(--color-secondary);
+}
+.address-row .delivery-due {
+  margin-top: 10px;
+}
+.pipeline-stage[data-stage] .pipeline-icon {
+  color: var(--stage-ink);
+  background: var(--stage-soft);
+  border-color: var(--stage-line);
+}
+.pipeline-stage[data-stage] .pipeline-bar {
+  background: var(--stage-accent);
+}
+.pipeline-stage[data-stage].selected {
+  background: var(--stage-soft);
+  box-shadow: inset 0 -3px var(--stage-accent);
+}
+.board-column[data-stage] > h3 {
+  color: var(--stage-ink);
+  background: var(--stage-soft);
+  border: 1px solid var(--stage-line);
+  border-radius: 6px;
+  padding: 10px;
+}
+.board-column[data-stage] .board-card {
+  border-top: 3px solid var(--stage-line);
+}
+.board-column[data-stage] .board-card p {
+  color: var(--stage-ink);
+}
+.detail-pipeline button[data-stage].done > span,
+.detail-pipeline button[data-stage].current > span {
+  color: var(--stage-ink);
+  background: var(--stage-soft);
+  border-color: var(--stage-accent);
+}
+.detail-pipeline button[data-stage].current > span {
+  box-shadow: 0 0 0 4px var(--stage-soft);
+}
+.detail-pipeline button[data-stage].current small {
+  color: var(--stage-ink);
+}
+.next-step-card[data-stage] {
+  background: var(--stage-soft);
+  border-color: var(--stage-line);
+}
+.next-step-card[data-stage] h3 {
+  color: var(--stage-ink);
+}
+.next-step-card[data-stage] .next-step-icon {
+  color: var(--stage-ink);
+  background: white;
+}
+.next-step-card[data-stage].blocked,
+.stock-resolution {
+  background: var(--attention-soft);
+  border-color: var(--attention-line);
+  border-left-color: var(--attention-ink);
+}
+.next-step-card.blocked[data-stage] h3,
+.next-step-card.blocked[data-stage] .next-step-icon,
+.stock-resolution h4 {
+  color: var(--attention-ink);
+}
+.completed-banner {
+  background: var(--success-soft);
+  border-color: #cfe1d2;
+}
+.completed-banner strong,
+.complete-footer {
+  color: var(--success-ink);
+}
+.stock-short {
+  color: var(--danger-ink);
+}
+.stock-good {
+  color: var(--success-ink);
+}
+.summary-card[data-tone="attention"] .metric-value {
+  color: var(--attention-ink);
+}
+.summary-card[data-tone="completed"] .metric-value {
+  color: var(--success-ink);
+}

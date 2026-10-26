@@ -1214,7 +1214,6 @@ tbody tr:hover {
   margin-top: 5px;
 }
 .overdue {
-  color: var(--color-secondary) !important;
 }
 .overdue svg {
   display: inline;
@@ -3200,7 +3199,7 @@ td, .order-id, .customer-cell strong, .amount, .next-action { font-size: 14px; }
 .action-sub { line-height: 1.5; }
 .status { line-height: 1.4; gap: 6px; padding: 5px 8px; }
 .status svg { width: 15px; height: 15px; }
-.priority.urgent, .overdue, .urgent-text, .stock-short { color: var(--color-ink) !important; font-weight: 650; }
+.priority.urgent, .overdue, .urgent-text, .stock-short { font-weight: 650; }
 .priority.urgent > span { background: var(--color-ink); }
 .detail-eyebrow, .next-step-card small, .footer-step > span { letter-spacing: 0; }
 .detail-header { padding-right: 64px; }

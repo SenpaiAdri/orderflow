@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types src/lib/workflow.test.ts"
+    "test": "node --experimental-strip-types src/lib/workflow.test.ts && node --experimental-strip-types src/features/orders/order-filters.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "1.1.15",

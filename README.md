@@ -28,6 +28,33 @@ Vite suits this brief because the behavior is client-side: the evaluation center
 
 References: [Vite guide](https://vite.dev/guide/), [shadcn Vite installation](https://ui.shadcn.com/docs/installation/vite).
 
+## Source structure
+
+```text
+src/
+  App.tsx                   # Navigation, shared state, and dialogs
+  components/
+    layout/                 # Workspace shell and sidebar
+    feedback/               # Notifications
+    help/                   # Getting-started dialog
+    ui/                     # Shared Button and Dialog primitives
+  features/
+    orders/
+      components/           # Summary, filters, table, board, status, avatar
+      create/               # Order form and customer fields
+      detail/               # Order details, documents, history, and approvals
+      order-filters.ts      # Search, filtering, and queue sorting
+      export-orders.ts      # CSV download
+      useOrders.ts          # Browser persistence and order updates
+      status.css            # Status, action, and delivery-date palette
+    stock/                  # Stock-check page and order cards
+    activity/               # Workspace order history
+  data/                     # Fictional orders and team members
+  lib/                      # Workflow rules, formatting, and shared helpers
+```
+
+Keep workflow rules in `src/lib/workflow.ts`. Feature components handle presentation and call those rules; storage keeps the existing `orderflow-demo-v1` key.
+
 ## What works
 
 - Orders dashboard with live counts, stage filtering, and an attention queue sorted by overdue status and urgency.
@@ -67,6 +94,6 @@ Browser storage is limited; a visible warning appears if saving fails. Use sampl
 
 ## Verification
 
-Strict TypeScript checks and the production build pass. Nine domain tests cover required intake information, payment proof, shortages, packing confirmation, delivery evidence, attention detection, and a full six-stage journey.
+Strict TypeScript checks and the production build pass. Twelve tests cover combined list filters, attention ordering, and workflow rules including required intake information, payment proof, shortages, packing confirmation, delivery evidence, attention detection, and a full six-stage journey.
 
 The October 2026 monochrome redesign was checked in Chrome DevTools at desktop and 390 px mobile widths. Checks covered attention filtering, missing payment proof, stock replenishment, packing confirmation, demo delivery evidence, completion, order creation, refresh persistence, and modal keyboard focus. The mobile page fits without horizontal overflow. A full screen reader audit and testing with real operators remain outstanding.
