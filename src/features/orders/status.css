@@ -115,26 +115,13 @@
   color: var(--status-completed);
 }
 
-.summary-top .overview-orders {
-  color: var(--status-new);
-}
-.summary-top .overview-attention {
-  color: var(--status-payment);
-}
-.summary-top .overview-delivery {
-  color: var(--status-delivery);
-}
-.summary-top .overview-completed,
 .completed-banner > svg,
 .complete-footer > svg,
 .toast > svg {
   color: var(--status-completed);
 }
-.next-step-card.blocked .next-step-icon {
-  color: var(--status-payment);
-}
 
-/* A stage uses the same tint in the list, board, stage filters, and details. */
+/* A stage uses the same tint in the list, board, and details. */
 .stage-0,
 [data-stage="0"] {
   --stage-ink: #4e6379;
@@ -239,18 +226,6 @@
 .address-row .delivery-due {
   margin-top: 10px;
 }
-.pipeline-stage[data-stage] .pipeline-icon {
-  color: var(--stage-ink);
-  background: var(--stage-soft);
-  border-color: var(--stage-line);
-}
-.pipeline-stage[data-stage] .pipeline-bar {
-  background: var(--stage-accent);
-}
-.pipeline-stage[data-stage].selected {
-  background: var(--stage-soft);
-  box-shadow: inset 0 -3px var(--stage-accent);
-}
 .board-column[data-stage] > h3 {
   color: var(--stage-ink);
   background: var(--stage-soft);
@@ -276,25 +251,11 @@
 .detail-pipeline button[data-stage].current small {
   color: var(--stage-ink);
 }
-.next-step-card[data-stage] {
-  background: var(--stage-soft);
-  border-color: var(--stage-line);
-}
-.next-step-card[data-stage] h3 {
-  color: var(--stage-ink);
-}
-.next-step-card[data-stage] .next-step-icon {
-  color: var(--stage-ink);
-  background: white;
-}
-.next-step-card[data-stage].blocked,
 .stock-resolution {
   background: var(--attention-soft);
   border-color: var(--attention-line);
   border-left-color: var(--attention-ink);
 }
-.next-step-card.blocked[data-stage] h3,
-.next-step-card.blocked[data-stage] .next-step-icon,
 .stock-resolution h4 {
   color: var(--attention-ink);
 }
@@ -310,11 +271,5 @@
   color: var(--danger-ink);
 }
 .stock-good {
-  color: var(--success-ink);
-}
-.summary-card[data-tone="attention"] .metric-value {
-  color: var(--attention-ink);
-}
-.summary-card[data-tone="completed"] .metric-value {
   color: var(--success-ink);
 }

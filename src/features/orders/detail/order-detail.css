@@ -270,14 +270,6 @@
   margin-bottom: 4px;
 }
 
-.blocked-hint {
-  width: 100%;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--color-secondary);
-  text-align: right;
-}
-
 .confirm-action {
   width: 100%;
 }
@@ -386,10 +378,6 @@
   .footer-step {
     font-size: 13px;
   }
-
-  .blocked-hint {
-    font-size: 13px;
-  }
 }
 
 .detail-eyebrow,
@@ -420,10 +408,6 @@
 
 .detail-section h3 {
   font-size: 16px;
-  color: var(--color-ink);
-}
-
-.blocked-hint {
   color: var(--color-ink);
 }
 
@@ -461,10 +445,6 @@
     font-size: 14px;
   }
 
-  .detail-footer .blocked-hint {
-    text-align: left;
-  }
-
   .confirm-action > div {
     flex-wrap: wrap;
   }
@@ -476,4 +456,9 @@
   .detail-section h3 > span {
     margin-left: 0;
   }
+}
+
+/* Keep approval focused on its decision. */
+.order-dialog:has(.confirm-action) .detail-scroll {
+  display: none;
 }

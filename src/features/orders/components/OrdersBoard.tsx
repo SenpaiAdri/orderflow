@@ -2,7 +2,6 @@ import { ArrowRight } from "lucide-react";
 import {
   nextAction,
   STAGES,
-  attentionReason,
   money,
   total,
   type Order,
@@ -48,7 +47,6 @@ export function OrdersBoard({
                   </span>
                 </div>
                 <p>{nextAction(o)}</p>
-                {attentionReason(o) && <small>{attentionReason(o)}</small>}
                 <footer>
                   <span>{money(total(o))}</span>
                   <ArrowRight size={13} />

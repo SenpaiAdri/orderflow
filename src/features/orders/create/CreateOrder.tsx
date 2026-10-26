@@ -74,8 +74,7 @@ export function CreateOrder({
         </span>
         <DialogTitle>New order</DialogTitle>
         <DialogDescription>
-          Enter the customer, items, and delivery details. Fields marked * are
-          required.
+          Fields marked * are required.
         </DialogDescription>
       </div>
       <form onSubmit={submit}>
@@ -119,9 +118,7 @@ export function CreateOrder({
         <Button className="w-full" type="submit">
           Create order <ArrowRight size={16} />
         </Button>
-        <p className="form-caption">
-          Assigned to you. Review the details after creating the order.
-        </p>
+
       </form>
     </DialogContent>
   );

@@ -15,7 +15,7 @@ import {
   defaultOrderFilters,
   type OrderFilters,
 } from "@/features/orders/order-filters";
-import { needsAttention, type Order } from "@/lib/workflow";
+import type { Order } from "@/lib/workflow";
 
 function App() {
   const { orders, storageError, updateOrder, createOrder } = useOrders();
@@ -56,17 +56,12 @@ function App() {
       <AppLayout
         page={page}
         orderCount={orders.length}
-        attentionCount={orders.filter(needsAttention).length}
         onNavigate={setPage}
         onHome={() => {
           setPage("Orders");
           resetFilters();
         }}
         onHelp={() => setHelpOpen(true)}
-        onAttention={() => {
-          setPage("Orders");
-          changeFilters({ tab: "Needs attention", stageFilter: null });
-        }}
       >
         <div className="page-heading">
           <div>
@@ -77,13 +72,7 @@ function App() {
                   ? "Stock checks"
                   : "Order history"}
             </h1>
-            <p>
-              {page === "Orders"
-                ? "Find an order and see what to do next."
-                : page === "Inventory"
-                  ? "Check quantities and fix shortages before packing."
-                  : "See who updated each order and what changed."}
-            </p>
+
           </div>
           {page === "Orders" && (
             <Button onClick={() => setCreateOpen(true)}>

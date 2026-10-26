@@ -14,9 +14,9 @@ Three workspace destinations reflect operational jobs. The interface labels Inve
 | Inventory   | What is blocking preparation?      | Order-specific stock requirements and shortages     |
 | Activity    | What changed, and who approved it? | Timestamped decisions, notes, and handoffs          |
 
-The Orders screen leads with a short title, four count filters, and the order list. Stage filters sit in an expandable “Filter by order stage” section. Clicking a count or stage filters the same list rather than navigating away. On phones, table rows become labeled order cards so the next action, delivery date, and total fit without horizontal scrolling.
+The Orders screen leads with New order and a secondary Download list action. One set of queue tabs provides All orders, Needs attention, Assigned to me, and Completed. Search stays visible; owner, priority, stage, and list/board settings share one Filters disclosure. Duplicate count cards and pipeline filters are removed. Each order has one action to open its next task. On phones, rows become labeled cards without horizontal scrolling.
 
-The detail dialog preserves the user's place in the queue. It keeps the order identifier, current status, and action footer visible while the content scrolls. The owner appears beside the order identity and in the queue. On opening, keyboard focus moves to the current stage; the progress strip scrolls to keep the selected step visible on phones.
+The detail dialog preserves the user's place in the queue. It keeps the order identifier and current status visible while the content scrolls. A handoff footer appears only on the current Details step when its prerequisites are ready. The owner appears beside the order identity and in the queue. On opening, keyboard focus moves to the current stage; the progress strip scrolls to keep the selected step visible on phones.
 
 ## Four questions the interface answers
 
@@ -40,15 +40,15 @@ A stage describes **where work is**. Attention describes **why someone should in
 | Delivery             | Address, reference, proof                | Confirm delivery and complete           |
 | Order completion     | Confirmed status, history, summary       | Download summary; no further transition |
 
-Completed steps show read-only information, evidence links, and their recorded approval. Older demo records without a recorded approval say so explicitly. Future steps are visible but unavailable, making sequence and progress clear. Selecting a step opens its Details view, and a successful handoff opens the next stage's task. Attachments and activity remain available across stages. Notes and supporting metadata are collapsed until requested.
+Completed steps show read-only information, evidence links, and their recorded approval. Older demo records without a recorded approval say so explicitly. Future steps are visible but unavailable, making sequence and progress clear. Selecting a step opens its Details view, and a successful handoff opens the next stage's task. Attachments and activity remain available across stages. Supporting metadata is collapsed until requested. Notes are added in History.
 
 At New order, **Edit order details** reuses the intake fields to correct the customer, products, quantities, address, notes, and deadline. Saving validates the order and records the correction. Confirming intake locks those values; later changes would need a business-approved rework policy because payment and stock decisions depend on them.
 
-Stage-specific controls come before supporting information. Payment leads with the expected amount and receipt; stock checking and packing lead with the items; delivery leads with the address, reference, and proof. Payment and delivery provide contextual attachment buttons that open Documents with the correct evidence type. Demo evidence remains available and labeled.
+Stage-specific controls come before supporting information. Payment leads with the expected amount and receipt; stock checking and packing lead with the items; delivery leads with the address, reference, and proof. Payment and delivery provide contextual attachment buttons that open Documents with the correct evidence type. Demo evidence is a secondary action inside Documents, alongside the primary upload action, and remains labeled.
 
 The queue names the work needed now, such as **Confirm packing** or **Attach delivery proof**, before offering a handoff such as **Complete order**. The Delivery stage is labeled **Delivery** because entering it confirms readiness for delivery, without claiming that a courier has dispatched the order.
 
-The approval footer offers one forward action with a separate confirmation. When prerequisites are missing, the action is disabled and the reason is visible next to it. The same constraints exist in the domain functions, so the UI is not the only guard.
+The approval footer offers one forward action with a separate confirmation. When prerequisites are missing, the stage shows the work needed to resolve them; the handoff appears once ready. Documents, History, and past steps do not display a current-stage handoff. Approval confirmation hides the task content and offers only Confirm and Go back. The same constraints exist in the domain functions, so the UI is not the only guard.
 
 ## Cognitive load and hierarchy
 
@@ -56,6 +56,8 @@ The approval footer offers one forward action with a separate confirmation. When
 - Blockers and urgency appear alongside the next action, so users can decide without opening every order.
 - All views derive their counts from the same order collection. Moving an order updates the pipeline, queue, dashboard, and history.
 - White surfaces, black primary actions, dark body text, and gray borders keep the interface neutral. Muted slate, amber, teal, purple, blue, and green connect stage badges, action links, stage filters, and order details. Light tints group statuses without coloring entire table rows. Muted red highlights overdue deliveries and urgency; amber marks deliveries due today and missing prerequisites; green marks completed delivery. Labels and explicit blocker messages keep status understandable without color.
+- Each task area has one main action and at most one secondary action. Navigation and field choices stay visually separate from task actions. Essential stage information leads; supporting details are disclosed on demand. Repeated helper copy and duplicated actions are removed.
+- Stock shortages use an explicit Save stock quantities action rather than saving when a field loses focus.
 - Body and table text use a system sans-serif font, with 14 px main text and a 13 px minimum for supporting text. Decorative subtitles, fabricated charts, and promotional copy are removed.
 - Search, owner, priority, and stage filters combine. An empty result provides a clear reset.
 - Intake asks for essentials first. Evidence and operational confirmations appear at the stage that needs them.
@@ -71,7 +73,7 @@ The approval footer offers one forward action with a separate confirmation. When
 - `src/features/orders/create/`: minimal intake form and customer fields.
 - `src/features/stock/`: stock exceptions and order cards.
 - `src/features/activity/`: workspace history.
-- `src/features/orders/components/`: list and board views, filters, summaries, and shared status/avatar components.
+- `src/features/orders/components/`: list and board views, filters, and shared status/avatar components.
 - `src/features/orders/order-filters.ts`: search, combined filters, and queue sorting, covered by public-function tests.
 - `src/features/orders/useOrders.ts`: loading, saving, and updating orders using the existing browser-storage key.
 - `src/features/orders/status.css`: one muted palette for stage badges, action links, delivery dates, stage filters, and order details.

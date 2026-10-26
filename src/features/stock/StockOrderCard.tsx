@@ -32,7 +32,7 @@ export function StockOrderCard({
           </span>
         </div>
       ))}
-      <Button variant="outline" onClick={() => onOpen(order.id)}>
+      <Button onClick={() => onOpen(order.id)}>
         Check stock <ArrowRight size={14} />
       </Button>
     </article>

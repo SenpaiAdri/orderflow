@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { LayoutGrid, ListFilter, ListOrdered, Search, X } from "lucide-react";
+import { ListFilter, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { STAGES } from "@/lib/workflow";
 import { owners } from "@/data/team";
 import type { OrderFilters } from "../order-filters";
 
@@ -20,6 +21,25 @@ export function OrdersToolbar({
   const { query, tab, ownerFilter, priorityFilter } = filters;
   const [filtersOpen, setFiltersOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!filtersOpen) return;
+    function dismiss(event: PointerEvent) {
+      if (!filterRef.current?.contains(event.target as Node)) setFiltersOpen(false);
+    }
+    function escape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setFiltersOpen(false);
+        filterRef.current?.querySelector("button")?.focus();
+      }
+    }
+    document.addEventListener("pointerdown", dismiss);
+    document.addEventListener("keydown", escape);
+    return () => {
+      document.removeEventListener("pointerdown", dismiss);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [filtersOpen]);
   useEffect(() => {
     function shortcut(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key === "k") {
@@ -79,29 +99,30 @@ export function OrdersToolbar({
             <kbd>⌘ K</kbd>
           )}
         </div>
-        <div className="filter-wrap">
+        <div className="filter-wrap" ref={filterRef}>
           <Button
             variant="outline"
             size="sm"
             className={
               filtersOpen ||
               ownerFilter !== "Everyone" ||
-              priorityFilter !== "All priorities"
+              priorityFilter !== "All priorities" || filters.stageFilter !== null
                 ? "filter-active"
                 : ""
             }
             onClick={() => setFiltersOpen(!filtersOpen)}
             aria-expanded={filtersOpen}
+            aria-controls="order-filters"
           >
             <ListFilter size={15} />
             Filters
             {(ownerFilter !== "Everyone" ||
-              priorityFilter !== "All priorities") && (
+              priorityFilter !== "All priorities" || filters.stageFilter !== null) && (
               <span className="filter-indicator" />
             )}
           </Button>
           {filtersOpen && (
-            <div className="filter-popover">
+            <div className="filter-popover" id="order-filters" role="group" aria-label="Order filters">
               <label>
                 Assigned to
                 <select
@@ -128,6 +149,20 @@ export function OrdersToolbar({
                   ))}
                 </select>
               </label>
+              <label>
+                Order stage
+                <select value={filters.stageFilter ?? "all"} onChange={(e) => onFilterChange({ stageFilter: e.target.value === "all" ? null : Number(e.target.value) })}>
+                  <option value="all">All stages</option>
+                  {STAGES.map((stage, index) => <option key={stage} value={index}>{stage}</option>)}
+                </select>
+              </label>
+              <label>
+                View
+                <select value={layout} onChange={(e) => onLayoutChange(e.target.value as "list" | "board")}>
+                  <option value="list">List</option><option value="board">Board</option>
+                </select>
+              </label>
+              <Button size="sm" onClick={() => setFiltersOpen(false)}>Done</Button>
               <Button
                 variant="ghost"
                 size="sm"
@@ -135,6 +170,7 @@ export function OrdersToolbar({
                   onFilterChange({
                     ownerFilter: "Everyone",
                     priorityFilter: "All priorities",
+                    stageFilter: null,
                   });
                   setFiltersOpen(false);
                 }}
@@ -143,24 +179,6 @@ export function OrdersToolbar({
               </Button>
             </div>
           )}
-        </div>
-        <div className="view-switch">
-          <button
-            className={layout === "list" ? "active" : ""}
-            aria-label="List view"
-            aria-pressed={layout === "list"}
-            onClick={() => onLayoutChange("list")}
-          >
-            <ListOrdered size={17} /> List
-          </button>
-          <button
-            className={layout === "board" ? "active" : ""}
-            aria-label="Board view"
-            aria-pressed={layout === "board"}
-            onClick={() => onLayoutChange("board")}
-          >
-            <LayoutGrid size={16} /> Board
-          </button>
         </div>
       </div>
     </div>

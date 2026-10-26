@@ -1,61 +1,9 @@
-.next-step-card {
-  display: flex;
-  gap: 13px;
-  padding: 17px;
-  border: 1px solid var(--color-line);
-  background: var(--color-canvas);
-  border-radius: 8px;
-  margin-bottom: 19px;
-}
-
-.next-step-card.blocked {
-  background: var(--color-canvas);
-  border-color: var(--color-line);
-}
-
-.next-step-icon {
-  height: 33px;
-  width: 33px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background: var(--color-soft);
-  color: var(--color-ink);
-  flex-shrink: 0;
-}
-
-.blocked .next-step-icon {
-  background: var(--color-soft);
-  color: var(--color-secondary);
-}
-
-.next-step-card small {
-  font-size: 13px;
-  letter-spacing: 1px;
-  color: var(--color-secondary);
-}
-
 .blocked small {
   color: var(--color-secondary);
 }
 
-.next-step-card h3 {
-  font-size: 13px;
-  font-weight: 600;
-  margin: 5px 0;
-  color: var(--color-ink);
-}
-
 .blocked h3 {
   color: var(--color-ink);
-}
-
-.next-step-card p {
-  font-size: 13px;
-  line-height: 1.7;
-  color: var(--color-secondary);
-  max-width: 470px;
 }
 
 .blocked p {
@@ -328,18 +276,6 @@
 }
 
 @media (max-width: 700px) {
-  .next-step-card {
-    padding: 13px;
-    gap: 9px;
-  }
-
-  .next-step-card p {
-    font-size: 13px;
-  }
-
-  .next-step-card h3 {
-    font-size: 13px;
-  }
 
   .item-info strong {
     font-size: 13px;
@@ -378,20 +314,6 @@
   }
 }
 
-.next-step-card small {
-  letter-spacing: 0;
-}
-
-.next-step-card h3 {
-  font-size: 16px;
-  color: var(--color-ink);
-}
-
-.next-step-card p {
-  color: var(--color-ink);
-}
-
-.next-step-card.blocked,
 .stock-resolution {
   border-left: 3px solid var(--color-ink);
 }

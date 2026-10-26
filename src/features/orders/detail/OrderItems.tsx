@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { StageIcon } from "../components/OrderStatus";
 import { Package, ShoppingBag } from "lucide-react";
 import { money, total, type Order } from "@/lib/workflow";
@@ -54,12 +55,18 @@ export function OrderItems({
         <strong>{money(total(order))}</strong>
       </div>
       {checkStock && order.items.some((i) => i.stock < i.qty) && (
-        <div className="stock-resolution">
+        <form className="stock-resolution" onSubmit={(event) => {
+          event.preventDefault();
+          const quantities = new FormData(event.currentTarget);
+          const items = order.items.map((item) => ({
+            ...item,
+            stock: quantities.has(item.sku) ? Number(quantities.get(item.sku)) : item.stock,
+          }));
+          if (items.some((item) => !Number.isInteger(item.stock) || item.stock < 0 || item.stock > 99999)) return;
+          logChange({ items, issue: items.every((item) => item.stock >= item.qty) ? undefined : order.issue }, "Available stock updated");
+        }}>
           <h4>Update available stock</h4>
-          <p>
-            Enter the quantity counted in the warehouse. Demo quantities apply
-            to this order only.
-          </p>
+          <p>Demo availability for this order only.</p>
           {order.items
             .filter((i) => i.stock < i.qty)
             .map((item) => (
@@ -67,35 +74,18 @@ export function OrderItems({
                 {item.name}
                 <input
                   aria-label={`Available stock for ${item.name}`}
+                  name={item.sku}
+                  required
+                  step="1"
                   type="number"
                   min="0"
                   max="99999"
                   defaultValue={item.stock}
-                  onBlur={(e) => {
-                    const value = Number(e.target.value);
-                    if (
-                      Number.isInteger(value) &&
-                      value >= 0 &&
-                      value <= 99999 &&
-                      value !== item.stock
-                    )
-                      logChange(
-                        {
-                          items: order.items.map((i) =>
-                            i.sku === item.sku ? { ...i, stock: value } : i,
-                          ),
-                          issue: value >= item.qty ? undefined : order.issue,
-                        },
-                        `Stock for ${item.sku} updated to ${value}`,
-                      );
-                  }}
                 />
               </label>
             ))}
-          <p className="field-hint">
-            Enter the counted stock and move focus to save.
-          </p>
-        </div>
+          <Button type="submit" size="sm">Save stock quantities</Button>
+        </form>
       )}
     </section>
   );

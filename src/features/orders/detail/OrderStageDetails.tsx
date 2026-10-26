@@ -6,12 +6,10 @@ import { money, total, type Order, type Attachment } from "@/lib/workflow";
 
 export function PaymentDetails({
   order,
-  attachDemo,
   onDocuments,
   editing,
 }: {
   order: Order;
-  attachDemo: (type: Attachment["type"]) => void;
   onDocuments: (type: Attachment["type"]) => void;
   editing: boolean;
 }) {
@@ -36,22 +34,10 @@ export function PaymentDetails({
             ? "Payment receipt attached"
             : "No payment receipt yet"}
         </span>
-        {editing && !order.attachments.some((a) => a.type === "receipt") && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => attachDemo("receipt")}
-          >
-            Use demo receipt
-          </Button>
-        )}
-        <Button variant="outline" size="sm" onClick={() => onDocuments("receipt")}>
+        <Button variant={editing && !order.attachments.some((a) => a.type === "receipt") ? "default" : "outline"} size="sm" onClick={() => onDocuments("receipt")}>
           {order.attachments.some((a) => a.type === "receipt") ? "Review receipt" : "Attach payment receipt"} <ArrowUpRight size={13} />
         </Button>
       </div>
-      <p className="field-hint">
-        {editing ? "Review the uploaded evidence before approving. " : "Evidence is retained with the order. "}Demo files are labeled as samples.
-      </p>
     </section>
   );
 }
@@ -87,7 +73,6 @@ export function PackingConfirmation({
         />
         <span>
           <strong>All items picked, checked, and packed</strong>
-          <small>Confirm quantities, quality, and protective packaging.</small>
         </span>
       </label>
     </section>
@@ -98,13 +83,11 @@ export function DeliveryDetails({
   order,
   editing,
   update,
-  attachDemo,
   onDocuments,
 }: {
   order: Order;
   editing: boolean;
   update: (order: Order) => void;
-  attachDemo: (type: Attachment["type"]) => void;
   onDocuments: (type: Attachment["type"]) => void;
 }) {
   return (
@@ -142,16 +125,7 @@ export function DeliveryDetails({
                 ? "Proof of delivery attached"
                 : "Proof of delivery needed"}
             </span>
-            {editing && !order.attachments.some((a) => a.type === "delivery") && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => attachDemo("delivery")}
-              >
-                Use demo proof
-              </Button>
-            )}
-            <Button variant="outline" size="sm" onClick={() => onDocuments("delivery")}>
+            <Button variant={editing && !order.attachments.some((a) => a.type === "delivery") ? "default" : "outline"} size="sm" onClick={() => onDocuments("delivery")}>
               {order.attachments.some((a) => a.type === "delivery") ? "Review delivery proof" : "Attach delivery proof"}
             </Button>
           </div>}

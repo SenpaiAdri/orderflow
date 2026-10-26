@@ -5,8 +5,6 @@
 @import "./components/layout/layout.css";
 @import "./styles/shared.css";
 @import "./features/orders/components/orders-toolbar.css";
-@import "./features/orders/components/order-summary.css";
-@import "./features/orders/components/order-stage-filter.css";
 @import "./features/orders/components/orders-table.css";
 @import "./features/orders/components/order-avatar.css";
 @import "./components/feedback/feedback.css";

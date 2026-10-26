@@ -94,7 +94,7 @@ export function OrderDetail({
           <OrderStatus stage={order.stage} />
         </DialogTitle>
         <DialogDescription>
-          {order.company} <span>·</span> Created by Alex Morgan
+          {order.company}
         </DialogDescription>
       </div>
       <div className="detail-scroll">
@@ -102,7 +102,6 @@ export function OrderDetail({
           <OrderAvatar order={order} />
           <div>
             <strong>{order.customer}</strong>
-            <span>{order.email}</span>
             <span>Assigned to {order.owner}</span>
           </div>
           <strong>
@@ -144,18 +143,16 @@ export function OrderDetail({
             inspected={inspected}
             logChange={logChange}
             update={update}
-            attachDemo={attachDemo}
             onDocuments={openDocuments}
             onEdit={() => setEditing(true)}
-          >
-            {noteForm}
-          </OrderOverview>
+          />
         )}
         <OrderDocuments
           order={order}
           active={!editing && detailTab === "Attachments"}
           uploadType={uploadType}
           onUploadTypeChange={setUploadType}
+          attachDemo={attachDemo}
           logChange={logChange}
           notify={notify}
           onError={setError}
@@ -170,7 +167,7 @@ export function OrderDetail({
           </div>
         )}
       </div>
-      {!editing && <OrderActions
+      {!editing && detailTab === "Overview" && inspected === order.stage && <OrderActions
         order={order}
         update={update}
         notify={notify}

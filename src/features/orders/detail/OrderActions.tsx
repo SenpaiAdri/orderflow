@@ -38,6 +38,8 @@ export function OrderActions({
     }
   }
 
+  if (order.stage < 5 && !check.ready) return null;
+
   return (
     <div className="detail-footer">
       {order.stage === 5 ? (
@@ -47,7 +49,6 @@ export function OrderActions({
             All six stages completed
           </span>
           <Button
-            variant="outline"
             onClick={() => {
               const blob = new Blob(
                 [
@@ -74,7 +75,7 @@ export function OrderActions({
             {ACTIONS[order.stage]} and move to {STAGES[order.stage + 1]}?
           </p>
           <div>
-            <Button variant="outline" onClick={() => setConfirm(false)}>
+            <Button autoFocus variant="outline" onClick={() => setConfirm(false)}>
               Go back
             </Button>
             <Button onClick={next}>
@@ -89,14 +90,12 @@ export function OrderActions({
             {STAGES[order.stage]}
           </span>
           <Button
-            disabled={!check.ready}
             onClick={() => setConfirm(true)}
             title={check.reason || ACTIONS[order.stage]}
           >
             {ACTIONS[order.stage]}
             <ArrowRight size={15} />
           </Button>
-          {!check.ready && <p className="blocked-hint">{check.reason}</p>}
         </>
       )}
     </div>

@@ -13,7 +13,6 @@ export function OrderHistory({
   return (
     <section className="detail-section">
       <h3>Order history</h3>
-      <p className="muted">A shared history of this order, newest first.</p>
       <div className="timeline">
         {activity.map((a, i) => (
           <div className="timeline-entry" key={`${a.at}-${i}`}>

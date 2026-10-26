@@ -3,8 +3,6 @@ import { Button } from "@/components/ui/button";
 import { needsAttention, STAGES, type Order } from "@/lib/workflow";
 import { filterOrders, type OrderFilters } from "./order-filters";
 import { exportOrders } from "./export-orders";
-import { OrderSummary } from "./components/OrderSummary";
-import { OrderStageFilter } from "./components/OrderStageFilter";
 import { OrdersToolbar } from "./components/OrdersToolbar";
 import { OrdersTable } from "./components/OrdersTable";
 import { OrdersBoard } from "./components/OrdersBoard";
@@ -31,26 +29,12 @@ export function OrdersPage({
   const visible = filterOrders(orders, filters);
   return (
     <>
-      <OrderSummary
-        orders={orders}
-        filters={filters}
-        onFilterChange={onFilterChange}
-      />
-      <OrderStageFilter
-        orders={orders}
-        stageFilter={filters.stageFilter}
-        onFilterChange={onFilterChange}
-      />
       <section className="orders-section">
         <div className="section-title orders-title">
           <h2>
             Order list <span className="count-pill">{visible.length}</span>
           </h2>
           <div className="section-actions">
-            <span className="updated-label">
-              <span />
-              Saved on this device
-            </span>
             <Button
               variant="outline"
               size="sm"

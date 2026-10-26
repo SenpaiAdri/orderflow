@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ArrowUpRight, Bell, Menu } from "lucide-react";
+import { ArrowUpRight, Menu } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 
 export type WorkspacePage = "Orders" | "Inventory" | "Activity";
@@ -7,19 +7,15 @@ export type WorkspacePage = "Orders" | "Inventory" | "Activity";
 export function AppLayout({
   page,
   orderCount,
-  attentionCount,
   onNavigate,
   onHome,
-  onAttention,
   onHelp,
   children,
 }: {
   page: WorkspacePage;
   orderCount: number;
-  attentionCount: number;
   onNavigate: (page: WorkspacePage) => void;
   onHome: () => void;
-  onAttention: () => void;
   onHelp: () => void;
   children: ReactNode;
 }) {
@@ -37,7 +33,6 @@ export function AppLayout({
         page={page}
         mobileOpen={mobileNav}
         orderCount={orderCount}
-        onHelp={onHelp}
         onHome={() => {
           onHome();
           setMobileNav(false);
@@ -65,14 +60,6 @@ export function AppLayout({
               Demo workspace
             </span>
             <span className="topbar-divider" />
-            <button
-              className="notification icon-button"
-              aria-label={`${attentionCount} orders need attention`}
-              onClick={onAttention}
-            >
-              <Bell size={18} />
-              <i />
-            </button>
             <span className="user-avatar top-avatar">AM</span>
           </div>
         </header>

@@ -21,7 +21,7 @@ export function OrderNoteForm({
           maxLength={1000}
         />
       </label>
-      <Button variant="outline" size="sm" disabled={!note.trim()}>
+      <Button size="sm" disabled={!note.trim()}>
         Add note
       </Button>
     </form>

@@ -1,7 +1,6 @@
 import { ArrowRight, ChevronRight } from "lucide-react";
 import {
   nextAction,
-  attentionReason,
   money,
   needsAttention,
   total,
@@ -38,13 +37,8 @@ export function OrdersTable({
           {orders.map((o) => (
             <tr key={o.id} data-stage={o.stage} onClick={() => onOpen(o.id)}>
               <td>
-                <button className="order-id" onClick={() => onOpen(o.id)}>
-                  {o.id}
-                </button>
-                <div className={`priority ${o.priority}`}>
-                  <span />
-                  {o.priority === "urgent" ? "Urgent" : "Normal"}
-                </div>
+                <span className="order-id">{o.id}</span>
+                {o.priority === "urgent" && <div className="priority urgent"><span />Urgent</div>}
               </td>
               <td>
                 <div className="customer-cell">
@@ -67,9 +61,6 @@ export function OrdersTable({
                   {nextAction(o)}
                   {o.stage !== 5 && <ArrowRight size={13} />}
                 </button>
-                {attentionReason(o) && (
-                  <small className="action-sub">{attentionReason(o)}</small>
-                )}
               </td>
               <td data-label="Delivery due">
                 <DeliveryDue order={o} />

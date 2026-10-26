@@ -2,7 +2,6 @@ import {
   ArrowUpRight,
   Box,
   ClipboardList,
-  HelpCircle,
   History,
   ShoppingBag,
 } from "lucide-react";
@@ -14,14 +13,12 @@ export function Sidebar({
   orderCount,
   onHome,
   onNavigate,
-  onHelp,
 }: {
   page: WorkspacePage;
   mobileOpen: boolean;
   orderCount: number;
   onHome: () => void;
   onNavigate: (page: WorkspacePage) => void;
-  onHelp: () => void;
 }) {
   return (
     <aside className={`sidebar ${mobileOpen ? "mobile-open" : ""}`}>
@@ -75,11 +72,6 @@ export function Sidebar({
         ))}
       </nav>
       <div className="sidebar-bottom">
-        <button className="nav-item help-nav" onClick={() => onHelp()}>
-          <HelpCircle size={17} />
-          How to use Orderflow
-          <ArrowUpRight size={14} />
-        </button>
         <div className="profile">
           <span className="user-avatar">AM</span>
           <span>

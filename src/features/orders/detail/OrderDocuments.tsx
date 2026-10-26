@@ -11,6 +11,7 @@ export function OrderDocuments({
   onError,
   uploadType,
   onUploadTypeChange,
+  attachDemo,
 }: {
   order: Order;
   active: boolean;
@@ -19,6 +20,7 @@ export function OrderDocuments({
   onError: (message: string) => void;
   uploadType: Attachment["type"];
   onUploadTypeChange: (type: Attachment["type"]) => void;
+  attachDemo: (type: Attachment["type"]) => void;
 }) {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -77,9 +79,7 @@ export function OrderDocuments({
       <h3>
         Order attachments <span>{order.attachments.length} files</span>
       </h3>
-      <p className="muted">
-        Keep payment evidence and delivery documents with the order.
-      </p>
+
       {order.attachments.map((a, i) => (
         <div className="attachment" key={`${a.name}-${i}`}>
           <span className="file-icon">
@@ -131,7 +131,6 @@ export function OrderDocuments({
           <option value="other">Other document</option>
         </select>
         <Button
-          variant="outline"
           size="sm"
           disabled={uploading}
           onClick={() => fileRef.current?.click()}
@@ -143,6 +142,11 @@ export function OrderDocuments({
           )}
           Choose file
         </Button>
+        {uploadType !== "other" && !order.attachments.some((a) => a.type === uploadType) && (
+          <Button variant="ghost" size="sm" disabled={uploading} onClick={() => attachDemo(uploadType)}>
+            {uploadType === "receipt" ? "Use demo receipt" : "Use demo proof"}
+          </Button>
+        )}
         <input
           ref={fileRef}
           type="file"
