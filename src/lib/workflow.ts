@@ -1,3 +1,5 @@
+import { isOverdue } from "./delivery.ts";
+
 export const STAGES = [
   "New order",
   "Payment",
@@ -31,6 +33,7 @@ export interface Attachment {
 export interface Activity {
   text: string;
   at: string;
+  completedStage?: Stage;
 }
 export interface Order {
   id: string;
@@ -64,6 +67,15 @@ export function readiness(order: Order): Readiness {
       ready: false,
       reason: "Add customer and delivery details before confirming.",
     };
+  if (order.stage === 0 && (!order.items.length || order.items.some((item) =>
+    !item.name.trim() || !item.sku.trim() || !Number.isInteger(item.qty) ||
+    item.qty < 1 || item.qty > 999 || !Number.isFinite(item.price) || item.price < 0,
+  )))
+    return { ready: false, reason: "Add valid products and quantities before confirming." };
+  if (order.stage === 0 && !Number.isFinite(Date.parse(order.due)))
+    return { ready: false, reason: "Choose a delivery deadline before confirming." };
+  if (order.stage === 0 && new Set(order.items.map((item) => item.sku)).size !== order.items.length)
+    return { ready: false, reason: "Each product should appear once. Remove the duplicate and update its quantity." };
   if (order.stage === 1 && !order.attachments.some((a) => a.type === "receipt"))
     return {
       ready: false,
@@ -79,16 +91,13 @@ export function readiness(order: Order): Readiness {
       ready: false,
       reason: "Confirm that all items have been picked, checked, and packed.",
     };
-  if (
-    order.stage === 4 &&
-    (!order.tracking.trim() ||
-      !order.attachments.some((a) => a.type === "delivery"))
-  )
+  if (order.stage === 4 && !order.tracking.trim())
     return {
       ready: false,
-      reason:
-        "Add a delivery reference and proof of delivery to complete this order.",
+      reason: "Add a delivery reference before confirming delivery.",
     };
+  if (order.stage === 4 && !order.attachments.some((a) => a.type === "delivery"))
+    return { ready: false, reason: "Attach proof of delivery before completing this order." };
   return { ready: true, reason: "" };
 }
 export function advanceOrder(order: Order): Order {
@@ -102,10 +111,50 @@ export function advanceOrder(order: Order): Order {
       {
         text: `${ACTIONS[order.stage]} · approved by Alex Morgan`,
         at: new Date().toISOString(),
+        completedStage: order.stage,
       },
       ...order.activity,
     ],
   };
+}
+export function nextAction(order: Order): string {
+  if (order.stage === 0 && !readiness(order).ready) return "Edit order details";
+  if (order.stage === 1 && !readiness(order).ready) return "Add payment receipt";
+  if (order.stage === 2 && !readiness(order).ready) return "Update stock";
+  if (order.stage === 3 && !order.prepared) return "Confirm packing";
+  if (order.stage === 4) {
+    if (!order.tracking.trim()) return "Add delivery reference";
+    if (!order.attachments.some((a) => a.type === "delivery")) return "Attach delivery proof";
+  }
+  return ACTIONS[order.stage];
+}
+
+export type IntakeDetails = Pick<Order, "customer" | "company" | "email" | "address" | "items" | "due" | "note">;
+
+export function editIntake(order: Order, details: IntakeDetails): Order {
+  if (order.stage !== 0) throw new Error("Order details can only be edited before confirmation.");
+  const next = {
+    ...order,
+    customer: details.customer.trim(),
+    company: details.company.trim() || "Individual customer",
+    email: details.email.trim(),
+    address: details.address.trim(),
+    items: details.items,
+    due: details.due,
+    note: details.note.trim(),
+  };
+  const check = readiness(next);
+  if (!check.ready) throw new Error(check.reason);
+  return {
+    ...next,
+    initials: next.customer.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase(),
+    activity: [{ text: "Order details corrected by Alex Morgan before confirmation", at: new Date().toISOString() }, ...order.activity],
+  };
+}
+
+export function stageApproval(order: Order, stage: number): Activity | undefined {
+  return order.activity.find((entry) => entry.completedStage === stage ||
+    entry.text.startsWith(`${ACTIONS[stage]} · approved by `));
 }
 export function total(order: Order) {
   return order.items.reduce((sum, i) => sum + i.qty * i.price, 0);
@@ -142,7 +191,7 @@ export function needsAttention(order: Order) {
     Boolean(
       attentionReason(order) ||
       order.priority === "urgent" ||
-      order.due === "Overdue",
+      isOverdue(order),
     )
   );
 }

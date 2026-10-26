@@ -1,6 +1,6 @@
 import { ArrowRight, ChevronRight } from "lucide-react";
 import {
-  ACTIONS,
+  nextAction,
   attentionReason,
   money,
   needsAttention,
@@ -57,17 +57,14 @@ export function OrdersTable({
               </td>
               <td>
                 <OrderStatus stage={o.stage} />
+                <small className="order-owner">{o.owner}</small>
               </td>
               <td data-label="What to do next">
                 <button
                   className={`next-action ${needsAttention(o) ? "needs-action" : ""}`}
                   onClick={() => onOpen(o.id)}
                 >
-                  {attentionReason(o)?.includes("shortage")
-                    ? "Update stock"
-                    : attentionReason(o)?.includes("Missing")
-                      ? "Add payment receipt"
-                      : ACTIONS[o.stage]}
+                  {nextAction(o)}
                   {o.stage !== 5 && <ArrowRight size={13} />}
                 </button>
                 {attentionReason(o) && (

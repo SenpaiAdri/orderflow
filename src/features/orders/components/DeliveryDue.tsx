@@ -1,5 +1,6 @@
 import { CalendarDays, CheckCheck, Clock3 } from "lucide-react";
 import type { Order } from "@/lib/workflow";
+import { deliveryInput, deliveryLabel, isOverdue } from "@/lib/delivery";
 
 export function DeliveryDue({
   order,
@@ -9,9 +10,9 @@ export function DeliveryDue({
   const state =
     order.stage === 5
       ? "delivered"
-      : order.due === "Overdue"
+      : isOverdue(order)
         ? "overdue"
-        : order.due.startsWith("Today")
+        : deliveryInput(order.due).slice(0, 10) === deliveryInput(new Date().toISOString()).slice(0, 10)
           ? "today"
           : "upcoming";
   const Icon =
@@ -23,7 +24,7 @@ export function DeliveryDue({
   return (
     <span className={`delivery-due due-${state}`}>
       <Icon size={14} aria-hidden="true" />
-      {state === "delivered" ? "Delivered" : order.due}
+      {state === "delivered" ? "Delivered" : `${state === "overdue" ? "Overdue · " : ""}${deliveryLabel(order.due)} PHT`}
     </span>
   );
 }

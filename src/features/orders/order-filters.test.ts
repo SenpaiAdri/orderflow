@@ -12,7 +12,7 @@ function order(id: string, overrides: Partial<Order> = {}): Order {
     address: "Makati City",
     stage: 0,
     priority: "normal",
-    due: "Tomorrow",
+    due: "2099-10-27T09:00:00.000Z",
     owner: "Alex Morgan",
     initials: "IS",
     color: "mint",
@@ -61,9 +61,9 @@ test("order search combines with stage, owner, and priority filters", () => {
 });
 
 test("order views select attention, assigned, and completed orders independently", () => {
-  const overdue = order("late", { due: "Overdue", owner: "Mia Chen" });
+  const overdue = order("late", { due: "2000-01-01T09:00:00.000Z", owner: "Mia Chen" });
   const mine = order("mine");
-  const done = order("done", { stage: 5, due: "Overdue", owner: "Sam Rivera" });
+  const done = order("done", { stage: 5, due: "2000-01-01T09:00:00.000Z", owner: "Sam Rivera" });
   const orders = [done, mine, overdue];
   assert.deepEqual(
     filterOrders(orders, { ...defaultOrderFilters, tab: "Needs attention" }),
@@ -83,7 +83,7 @@ test("overdue orders sort first without changing the source collection", () => {
   const normal = order("normal");
   const urgent = order("urgent", { priority: "urgent" });
   const blocked = order("blocked", { stage: 1 });
-  const overdue = order("overdue", { due: "Overdue" });
+  const overdue = order("overdue", { due: "2000-01-01T09:00:00.000Z" });
   const orders = [normal, urgent, blocked, overdue];
   assert.deepEqual(
     filterOrders(orders, defaultOrderFilters).map((o) => o.id),
@@ -97,4 +97,6 @@ test("overdue orders sort first without changing the source collection", () => {
     filterOrders(orders, { ...defaultOrderFilters, query: "no match" }),
     [],
   );
+  const olderOverdue = order("older", { due: "1999-01-01T09:00:00.000Z" });
+  assert.deepEqual(filterOrders([overdue, olderOverdue], defaultOrderFilters).map((o) => o.id), ["older", "overdue"]);
 });

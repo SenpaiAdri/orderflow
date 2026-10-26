@@ -1,4 +1,5 @@
 import { needsAttention, type Order } from "../../lib/workflow.ts";
+import { isOverdue } from "../../lib/delivery.ts";
 
 export interface OrderFilters {
   query: string;
@@ -37,9 +38,10 @@ export function filterOrders(orders: Order[], filters: OrderFilters): Order[] {
     })
     .sort((a, b) => {
       const score = (o: Order) =>
-        (o.stage < 5 && o.due === "Overdue" ? 8 : 0) +
+        (isOverdue(o) ? 8 : 0) +
         (needsAttention(o) ? 4 : 0) +
         (o.stage < 5 && o.priority === "urgent" ? 2 : 0);
-      return score(b) - score(a);
+      return score(b) - score(a) ||
+        (isOverdue(a) && isOverdue(b) ? Date.parse(a.due) - Date.parse(b.due) : 0);
     });
 }

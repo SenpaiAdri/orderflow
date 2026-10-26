@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/dialog";
 import { money, type Order } from "@/lib/workflow";
 import { CustomerFields, type CustomerDetails } from "./CustomerFields";
+import { OrderItemFields, products } from "./OrderItemFields";
+import { deliveryInput, deliveryISO, migrateDeliveryDue } from "@/lib/delivery";
 export function CreateOrder({
   onCreate,
   nextId,
@@ -22,42 +24,27 @@ export function CreateOrder({
     address: "",
   });
   const { customer, company, email, address } = customerDetails;
-  const [quantity, setQuantity] = useState(6);
-  const [product, setProduct] = useState("mug");
+  const [item, setItem] = useState({ ...products[0], qty: 6 });
   const [priority, setPriority] = useState<"normal" | "urgent">("normal");
-  const [due, setDue] = useState("Tomorrow");
+  const [due, setDue] = useState(() => migrateDeliveryDue("Tomorrow"));
   const [note, setNote] = useState("");
   function submit(e: FormEvent) {
     e.preventDefault();
     if (
       !customer.trim() ||
       !address.trim() ||
-      !Number.isInteger(quantity) ||
-      quantity < 1 ||
-      quantity > 999
+      !Number.isInteger(item.qty) ||
+      item.qty < 1 ||
+      item.qty > 999 || !due
     )
       return;
-    const item =
-      product === "mug"
-        ? {
-            name: "Everyday ceramic mug",
-            sku: "CER-001",
-            price: 480,
-            stock: 42,
-          }
-        : {
-            name: "Linen table runner",
-            sku: "LIN-024",
-            price: 1250,
-            stock: 18,
-          };
     onCreate({
       id: nextId,
       customer: customer.trim(),
       company: company.trim() || "Individual customer",
       email: email.trim(),
       address: address.trim(),
-      items: [{ ...item, qty: quantity }],
+      items: [item],
       stage: 0,
       priority,
       due,
@@ -93,37 +80,12 @@ export function CreateOrder({
       </div>
       <form onSubmit={submit}>
         <CustomerFields value={customerDetails} onChange={setCustomerDetails} />
-        <div className="form-grid product-fields">
-          <label className="field-label">
-            Product
-            <select
-              value={product}
-              onChange={(e) => setProduct(e.target.value)}
-            >
-              <option value="mug">Everyday ceramic mug · ₱480</option>
-              <option value="linen">Linen table runner · ₱1,250</option>
-            </select>
-          </label>
-          <label className="field-label">
-            Quantity
-            <input
-              required
-              type="number"
-              min="1"
-              max="999"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-          </label>
-        </div>
+        <OrderItemFields item={item} onChange={setItem} />
         <div className="form-grid">
           <label className="field-label">
-            Delivery due
-            <select value={due} onChange={(e) => setDue(e.target.value)}>
-              <option>Tomorrow</option>
-              <option>Today, 5:00 PM</option>
-              <option>In 3 days</option>
-            </select>
+            Delivery due (Philippine time)
+            <input required type="datetime-local" value={deliveryInput(due)}
+              onChange={(e) => setDue(e.target.value ? deliveryISO(e.target.value) : "")} />
           </label>
           <label className="field-label">
             Priority
@@ -152,7 +114,7 @@ export function CreateOrder({
         </details>
         <div className="create-total">
           <span>Order total</span>
-          <strong>{money(quantity * (product === "mug" ? 480 : 1250))}</strong>
+          <strong>{money(item.qty * item.price)}</strong>
         </div>
         <Button className="full-width" type="submit">
           Create order <ArrowRight size={16} />

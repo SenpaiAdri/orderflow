@@ -6,10 +6,12 @@ export function OrderItems({
   order,
   checkStock,
   logChange,
+  showStock = checkStock,
 }: {
   order: Order;
   checkStock: boolean;
   logChange: (patch: Partial<Order>, text: string) => void;
+  showStock?: boolean;
 }) {
   return (
     <section className="detail-section">
@@ -32,7 +34,7 @@ export function OrderItems({
               <small>
                 {item.sku} · {money(item.price)} each
               </small>
-              {checkStock && (
+              {showStock && (
                 <span
                   className={
                     item.stock < item.qty ? "stock-short" : "stock-good"

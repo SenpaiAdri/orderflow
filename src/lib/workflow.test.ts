@@ -6,8 +6,12 @@ import {
   total,
   needsAttention,
   attentionReason,
+  nextAction,
+  editIntake,
+  stageApproval,
   type Order,
 } from "./workflow.ts";
+import { deliveryInput, deliveryISO, migrateDeliveryDue, isOverdue } from "./delivery.ts";
 function order(overrides: Partial<Order> = {}): Order {
   return {
     id: "ORD-TEST",
@@ -17,7 +21,7 @@ function order(overrides: Partial<Order> = {}): Order {
     address: "Makati City",
     stage: 0,
     priority: "normal",
-    due: "Tomorrow",
+    due: "2099-10-27T09:00:00.000Z",
     owner: "Alex Morgan",
     initials: "TC",
     color: "mint",
@@ -77,7 +81,7 @@ test("preparation requires packing confirmation", () => {
 test("completion requires both tracking and delivery proof", () => {
   assert.throws(
     () => advanceOrder(order({ stage: 4, tracking: "LAL-1" })),
-    /delivery reference and proof/,
+    /proof of delivery/,
   );
   assert.throws(
     () =>
@@ -87,7 +91,7 @@ test("completion requires both tracking and delivery proof", () => {
           attachments: [{ name: "proof.jpg", type: "delivery" }],
         }),
       ),
-    /delivery reference and proof/,
+    /delivery reference/,
   );
 });
 test("a complete order passes through all six stages with an audit entry for each handoff", () => {
@@ -113,9 +117,9 @@ test("urgent, blocked, and overdue orders need attention; completed orders do no
   assert.equal(needsAttention(order()), false);
   assert.equal(needsAttention(order({ priority: "urgent" })), true);
   assert.equal(needsAttention(order({ issue: "Missing receipt" })), true);
-  assert.equal(needsAttention(order({ due: "Overdue" })), true);
+  assert.equal(needsAttention(order({ due: "2000-01-01T09:00:00.000Z" })), true);
   assert.equal(
-    needsAttention(order({ stage: 5, priority: "urgent", due: "Overdue" })),
+    needsAttention(order({ stage: 5, priority: "urgent", due: "2000-01-01T09:00:00.000Z" })),
     false,
   );
 });
@@ -148,4 +152,65 @@ test("resolved evidence and stock blockers do not leave stale attention labels",
     attentionReason(order({ stage: 2, issue: "Stock shortage · 2 items" })),
     undefined,
   );
+});
+
+test("next actions name the missing prerequisite before the handoff", () => {
+  assert.equal(nextAction(order({ customer: "" })), "Edit order details");
+  assert.equal(nextAction(order({ stage: 1 })), "Add payment receipt");
+  assert.equal(nextAction(order({ stage: 2, items: [{ name: "Mug", sku: "MUG", qty: 12, stock: 10, price: 480 }] })), "Update stock");
+  assert.equal(nextAction(order({ stage: 3 })), "Confirm packing");
+  assert.equal(nextAction(order({ stage: 3, prepared: true })), "Mark ready for delivery");
+  assert.equal(nextAction(order({ stage: 4 })), "Add delivery reference");
+  assert.equal(nextAction(order({ stage: 4, tracking: "LAL-1" })), "Attach delivery proof");
+  assert.equal(nextAction(order({ stage: 4, tracking: "LAL-1", attachments: [{ name: "proof.txt", type: "delivery" }] })), "Complete order");
+  assert.equal(nextAction(order({ stage: 5 })), "View summary");
+});
+
+test("intake corrections validate data, update the total, and preserve history", () => {
+  const original = order({ activity: [{ text: "Order created", at: "2026-10-26T01:00:00.000Z" }] });
+  const details = { ...original, customer: "  Jane Reyes  ", address: "Quezon City", items: original.items.map((item) => ({ ...item, qty: 12 })) };
+  const edited = editIntake(original, details);
+  assert.equal(edited.customer, "Jane Reyes");
+  assert.equal(edited.initials, "JR");
+  assert.equal(edited.address, "Quezon City");
+  assert.equal(total(edited), 5760);
+  assert.equal(edited.stage, 0);
+  assert.equal(edited.activity.length, 2);
+  assert.equal(editIntake(original, { ...details, stage: 5 } as Order).stage, 0);
+  assert.match(edited.activity[0].text, /corrected/);
+  assert.equal(original.items[0].qty, 6);
+  assert.throws(() => editIntake(original, { ...details, items: [] }), /products and quantities/);
+  assert.throws(() => editIntake(original, { ...details, due: "" }), /deadline/);
+  assert.throws(() => editIntake(original, { ...details, items: [...details.items, ...details.items] }), /appear once/);
+  assert.throws(() => editIntake({ ...original, stage: 1 }, details), /before confirmation/);
+});
+
+test("invalid items cannot be confirmed at intake", () => {
+  for (const qty of [0, -1, 1.5, 1000, NaN]) {
+    assert.throws(() => advanceOrder(order({ items: [{ name: "Mug", sku: "MUG", qty, stock: 10, price: 480 }] })), /products and quantities/);
+  }
+});
+
+test("stage inspection finds the original approval and supports older activity records", () => {
+  const accepted = advanceOrder(order());
+  const paid = advanceOrder({ ...accepted, attachments: [{ name: "receipt.txt", type: "receipt" }] });
+  assert.equal(stageApproval(paid, 0)?.completedStage, 0);
+  assert.equal(stageApproval(paid, 1)?.completedStage, 1);
+  assert.equal(stageApproval(paid, 2), undefined);
+  assert.equal(stageApproval(order({ activity: [{ text: "Approve payment · approved by Alex Morgan", at: "2026-10-26T01:00:00Z" }] }), 1)?.at, "2026-10-26T01:00:00Z");
+});
+
+test("deadlines use Philippine time, survive migration, and become overdue with time", () => {
+  const anchor = Date.parse("2026-10-26T18:00:00Z"); // October 27 in Manila.
+  const due = migrateDeliveryDue("Tomorrow", anchor);
+  assert.equal(due, "2026-10-28T09:00:00.000Z");
+  assert.equal(deliveryInput(due), "2026-10-28T17:00");
+  assert.equal(deliveryISO("2026-10-28T17:00"), due);
+  assert.equal(migrateDeliveryDue(due, anchor + 86400000), due);
+  assert.equal(migrateDeliveryDue("Today, 12:30 AM", anchor), "2026-10-26T16:30:00.000Z");
+  assert.equal(migrateDeliveryDue("Today, 2:00 PM", anchor), "2026-10-27T06:00:00.000Z");
+  const pending = order({ due });
+  assert.equal(isOverdue(pending, Date.parse(due) - 1), false);
+  assert.equal(isOverdue(pending, Date.parse(due) + 1), true);
+  assert.equal(isOverdue({ ...pending, stage: 5 }, Date.parse(due) + 1), false);
 });

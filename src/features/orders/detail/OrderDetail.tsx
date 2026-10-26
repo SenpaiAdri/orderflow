@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { CircleAlert } from "lucide-react";
 import {
   DialogContent,
@@ -14,6 +14,7 @@ import { OrderDocuments } from "./OrderDocuments";
 import { OrderHistory } from "./OrderHistory";
 import { OrderNoteForm } from "./OrderNoteForm";
 import { OrderActions } from "./OrderActions";
+import { IntakeEditor } from "./IntakeEditor";
 
 export function OrderDetail({
   order,
@@ -25,13 +26,23 @@ export function OrderDetail({
   notify: (message: string) => void;
 }) {
   const [detailTab, setDetailTab] = useState("Overview");
+  const contentRef = useRef<HTMLDivElement>(null);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
   const [inspected, setInspected] = useState<number>(order.stage);
+  const [editing, setEditing] = useState(false);
+  const [uploadType, setUploadType] = useState<Attachment["type"]>(order.stage >= 4 ? "delivery" : "receipt");
   useEffect(() => {
     setInspected(order.stage);
+    setDetailTab("Overview");
+    setEditing(false);
     setError("");
+    setUploadType(order.stage >= 4 ? "delivery" : "receipt");
   }, [order.stage, order.id]);
+  function openDocuments(type: Attachment["type"]) {
+    setUploadType(type);
+    setDetailTab("Attachments");
+  }
   function logChange(patch: Partial<Order>, text: string) {
     update({
       ...order,
@@ -70,7 +81,10 @@ export function OrderDetail({
     <OrderNoteForm note={note} onChange={setNote} onSubmit={addNote} />
   );
   return (
-    <DialogContent className="order-dialog">
+    <DialogContent ref={contentRef} className="order-dialog" onOpenAutoFocus={(event) => {
+      event.preventDefault();
+      contentRef.current?.querySelector<HTMLButtonElement>(".detail-pipeline .current")?.focus();
+    }}>
       <div className="detail-header">
         <div className="detail-eyebrow">
           {order.priority === "urgent" ? "Urgent order" : "Order details"}
@@ -89,6 +103,7 @@ export function OrderDetail({
           <div>
             <strong>{order.customer}</strong>
             <span>{order.email}</span>
+            <span>Assigned to {order.owner}</span>
           </div>
           <strong>
             {money(total(order))}
@@ -96,12 +111,12 @@ export function OrderDetail({
           </strong>
         </div>
 
-        <OrderProgress
+        {!editing && <OrderProgress
           stage={order.stage}
           inspected={inspected}
-          onInspect={setInspected}
-        />
-        <div className="detail-tabs">
+          onInspect={(stage) => { setInspected(stage); setDetailTab("Overview"); }}
+        />}
+        {!editing && <div className="detail-tabs">
           {[
             { value: "Overview", label: "Details" },
             { value: "Attachments", label: "Documents" },
@@ -119,27 +134,33 @@ export function OrderDetail({
               {value === "Activity" && <span>{order.activity.length}</span>}
             </button>
           ))}
-        </div>
-        {detailTab === "Overview" && (
+        </div>}
+        {editing && <IntakeEditor order={order} onCancel={() => setEditing(false)} onSave={(next) => {
+          update(next); setEditing(false); notify("Order details saved");
+        }} />}
+        {!editing && detailTab === "Overview" && (
           <OrderOverview
             order={order}
             inspected={inspected}
             logChange={logChange}
             update={update}
             attachDemo={attachDemo}
-            onReviewReceipt={() => setDetailTab("Attachments")}
+            onDocuments={openDocuments}
+            onEdit={() => setEditing(true)}
           >
             {noteForm}
           </OrderOverview>
         )}
         <OrderDocuments
           order={order}
-          active={detailTab === "Attachments"}
+          active={!editing && detailTab === "Attachments"}
+          uploadType={uploadType}
+          onUploadTypeChange={setUploadType}
           logChange={logChange}
           notify={notify}
           onError={setError}
         />
-        {detailTab === "Activity" && (
+        {!editing && detailTab === "Activity" && (
           <OrderHistory activity={order.activity}>{noteForm}</OrderHistory>
         )}
         {error && (
@@ -149,12 +170,12 @@ export function OrderDetail({
           </div>
         )}
       </div>
-      <OrderActions
+      {!editing && <OrderActions
         order={order}
         update={update}
         notify={notify}
         onError={setError}
-      />
+      />}
     </DialogContent>
   );
 }

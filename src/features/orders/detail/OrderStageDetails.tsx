@@ -7,17 +7,19 @@ import { money, total, type Order, type Attachment } from "@/lib/workflow";
 export function PaymentDetails({
   order,
   attachDemo,
-  onReviewReceipt,
+  onDocuments,
+  editing,
 }: {
   order: Order;
   attachDemo: (type: Attachment["type"]) => void;
-  onReviewReceipt: () => void;
+  onDocuments: (type: Attachment["type"]) => void;
+  editing: boolean;
 }) {
   return (
     <section className="detail-section">
       <h3>
         <StageIcon stage={1} size={16} />
-        Check payment
+        {editing ? "Check payment" : "Payment summary"}
       </h3>
       <div className="payment-summary">
         <span>
@@ -34,7 +36,7 @@ export function PaymentDetails({
             ? "Payment receipt attached"
             : "No payment receipt yet"}
         </span>
-        {!order.attachments.some((a) => a.type === "receipt") ? (
+        {editing && !order.attachments.some((a) => a.type === "receipt") && (
           <Button
             variant="outline"
             size="sm"
@@ -42,15 +44,13 @@ export function PaymentDetails({
           >
             Use demo receipt
           </Button>
-        ) : (
-          <Button variant="ghost" size="sm" onClick={() => onReviewReceipt()}>
-            Review receipt <ArrowUpRight size={13} />
-          </Button>
         )}
+        <Button variant="outline" size="sm" onClick={() => onDocuments("receipt")}>
+          {order.attachments.some((a) => a.type === "receipt") ? "Review receipt" : "Attach payment receipt"} <ArrowUpRight size={13} />
+        </Button>
       </div>
       <p className="field-hint">
-        Review the uploaded evidence before approving. Demo files are labeled as
-        samples.
+        {editing ? "Review the uploaded evidence before approving. " : "Evidence is retained with the order. "}Demo files are labeled as samples.
       </p>
     </section>
   );
@@ -59,9 +59,11 @@ export function PaymentDetails({
 export function PackingConfirmation({
   order,
   logChange,
+  editing = true,
 }: {
   order: Order;
   logChange: (patch: Partial<Order>, text: string) => void;
+  editing?: boolean;
 }) {
   return (
     <section className="detail-section">
@@ -73,6 +75,7 @@ export function PackingConfirmation({
         <input
           type="checkbox"
           checked={order.prepared}
+          disabled={!editing}
           onChange={(e) =>
             logChange(
               { prepared: e.target.checked },
@@ -96,11 +99,13 @@ export function DeliveryDetails({
   editing,
   update,
   attachDemo,
+  onDocuments,
 }: {
   order: Order;
   editing: boolean;
   update: (order: Order) => void;
   attachDemo: (type: Attachment["type"]) => void;
+  onDocuments: (type: Attachment["type"]) => void;
 }) {
   return (
     <section className="detail-section">
@@ -116,7 +121,7 @@ export function DeliveryDetails({
           <DeliveryDue order={order} />
         </div>
       </div>
-      {editing && (
+      {editing ? (
         <>
           <label className="field-label">
             Delivery reference
@@ -126,14 +131,18 @@ export function DeliveryDetails({
               placeholder="e.g. LAL-8401"
             />
           </label>
-          <div className="evidence-row">
+        </>
+      ) : order.stage >= 4 && (
+        <p className="field-hint">Delivery reference: <strong>{order.tracking || "Not recorded"}</strong></p>
+      )}
+      {order.stage >= 4 && <div className="evidence-row">
             <span>
               <FileCheck2 size={18} />
               {order.attachments.some((a) => a.type === "delivery")
                 ? "Proof of delivery attached"
                 : "Proof of delivery needed"}
             </span>
-            {!order.attachments.some((a) => a.type === "delivery") && (
+            {editing && !order.attachments.some((a) => a.type === "delivery") && (
               <Button
                 variant="outline"
                 size="sm"
@@ -142,9 +151,10 @@ export function DeliveryDetails({
                 Use demo proof
               </Button>
             )}
-          </div>
-        </>
-      )}
+            <Button variant="outline" size="sm" onClick={() => onDocuments("delivery")}>
+              {order.attachments.some((a) => a.type === "delivery") ? "Review delivery proof" : "Attach delivery proof"}
+            </Button>
+          </div>}
     </section>
   );
 }

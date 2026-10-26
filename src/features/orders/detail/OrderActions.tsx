@@ -71,14 +71,14 @@ export function OrderActions({
         <div className="confirm-action">
           <p>
             <ShieldCheck size={17} />
-            Have you checked the details and documents?
+            {ACTIONS[order.stage]} and move to {STAGES[order.stage + 1]}?
           </p>
           <div>
             <Button variant="outline" onClick={() => setConfirm(false)}>
               Go back
             </Button>
             <Button onClick={next}>
-              Confirm next step <ArrowRight size={14} />
+              {ACTIONS[order.stage]} <ArrowRight size={14} />
             </Button>
           </div>
         </div>

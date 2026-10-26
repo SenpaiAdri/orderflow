@@ -61,8 +61,11 @@ Keep workflow rules in `src/lib/workflow.ts`. Feature components handle presenta
 - Search by order, customer, or company; filter by owner or priority.
 - List and board views of the same orders.
 - Create an order with customer, product, quantities, delivery details, and optional notes.
+- Correct customer details, products, quantities, notes, and the delivery deadline before confirming intake. Corrections are recorded in history; later stages keep those details read-only.
+- Actual delivery deadlines in Philippine time, automatic overdue detection, and migration of older saved relative dates without resetting orders.
 - Order detail dialog with a six-stage progress indicator, assigned owner, priority, next action, and prerequisites.
 - Explicit approval before each handoff, with a timestamped activity entry.
+- Immediate tasks shared by the list, board, and order details: resolve missing prerequisites before the handoff action. Completed steps show read-only evidence and approval summaries.
 - Payment evidence, stock shortage resolution, preparation confirmation, and delivery proof.
 - Upload and download attachments, using PDF, PNG, JPG, or text files up to 2 MB.
 - Labeled sample evidence for demo journeys when you do not have documents to upload.
@@ -72,12 +75,14 @@ Keep workflow rules in `src/lib/workflow.ts`. Feature components handle presenta
 
 ## Suggested demo (about five minutes)
 
-1. Open **Needs attention**. The overdue delivery appears first; explain that the queue separates urgency from workflow stage.
+1. Open **Needs attention**. Overdue work appears first, with the oldest deadline first when urgency is equal. Explain that the queue separates urgency from workflow stage.
 2. Open **ORD-1047**. Its inventory shortage blocks reservation. Enter **12** as the available mug stock and move focus to save. Review, reserve stock, and confirm the handoff.
 3. In Preparation, confirm the items are picked, checked, and packed. Mark ready and approve the handoff.
 4. In Delivery, enter a reference and attach proof through **Documents**, or choose **Use demo proof**. Complete the order and review the activity history.
 5. Open **ORD-1043** to demonstrate a missing payment receipt, then add demo evidence or upload a file before approving payment.
-6. Create a new order. It starts at New order with only the information needed to accept it. Refresh to demonstrate browser persistence.
+6. Create a new order. It starts at New order with only the information needed to accept it. Choose **Edit order details**, correct the address or quantity, and save. Refresh to demonstrate browser persistence.
+
+The Delivery stage means delivery work is in progress. Entering it after packing does not claim that a courier has dispatched the order. Dispatch booking and tracking remain outside the demo.
 
 Read [DESIGN.md](./DESIGN.md) for the UX rationale, evaluation mapping, and production boundary.
 
@@ -92,8 +97,10 @@ location.reload();
 
 Browser storage is limited; a visible warning appears if saving fails. Use sample documents or small files for the demo. Do not use real customer or payment data.
 
+Older saved delivery labels are converted once to timestamps using the date of the earliest recorded order activity. That date is an approximation because the old format did not preserve an actual deadline. New orders use a date and time explicitly labeled as Philippine time; deadlines and attention counts refresh every minute while the app is open.
+
 ## Verification
 
-Strict TypeScript checks and the production build pass. Twelve tests cover combined list filters, attention ordering, and workflow rules including required intake information, payment proof, shortages, packing confirmation, delivery evidence, attention detection, and a full six-stage journey.
+Strict TypeScript checks and the production build pass. Seventeen tests cover combined list filters, attention ordering, required intake information and valid items, guarded intake corrections, next-action labels, retained approval records, deadline migration and time zones, payment proof, shortages, packing confirmation, delivery evidence, attention detection, and a full six-stage journey.
 
-The October 2026 monochrome redesign was checked in Chrome DevTools at desktop and 390 px mobile widths. Checks covered attention filtering, missing payment proof, stock replenishment, packing confirmation, demo delivery evidence, completion, order creation, refresh persistence, and modal keyboard focus. The mobile page fits without horizontal overflow. A full screen reader audit and testing with real operators remain outstanding.
+The October 2026 workflow fixes were checked in Chrome DevTools at desktop and an emulated 390 px mobile viewport. Checks covered attention filtering, intake corrections, missing payment proof, payment and delivery file uploads with the correct document type, stock replenishment, packing confirmation, completion, read-only stage evidence and approvals, order creation, refresh persistence, and modal keyboard focus. Mobile dates do not overlap amounts, the current step is visible in the progress strip, and the page fits without horizontal overflow. A full screen reader audit and testing with real operators remain outstanding.

@@ -8,9 +8,11 @@ export interface CustomerDetails {
 export function CustomerFields({
   value,
   onChange,
+  autoFocus = false,
 }: {
   value: CustomerDetails;
   onChange: (value: CustomerDetails) => void;
+  autoFocus?: boolean;
 }) {
   const { customer, company, email, address } = value;
   return (
@@ -19,6 +21,7 @@ export function CustomerFields({
         <label className="field-label">
           Customer name <span>*</span>
           <input
+            autoFocus={autoFocus}
             required
             maxLength={80}
             autoComplete="name"

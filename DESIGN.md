@@ -16,7 +16,7 @@ Three workspace destinations reflect operational jobs. The interface labels Inve
 
 The Orders screen leads with a short title, four count filters, and the order list. Stage filters sit in an expandable “Filter by order stage” section. Clicking a count or stage filters the same list rather than navigating away. On phones, table rows become labeled order cards so the next action, delivery date, and total fit without horizontal scrolling.
 
-The detail dialog preserves the user's place in the queue. It keeps the order identifier, current status, and action footer visible while the content scrolls.
+The detail dialog preserves the user's place in the queue. It keeps the order identifier, current status, and action footer visible while the content scrolls. The owner appears beside the order identity and in the queue. On opening, keyboard focus moves to the current stage; the progress strip scrolls to keep the selected step visible on phones.
 
 ## Four questions the interface answers
 
@@ -24,7 +24,7 @@ The detail dialog preserves the user's place in the queue. It keeps the order id
 | --------------------- | -------------------------------------------------------------------------------- |
 | Where am I?           | Workspace breadcrumb, order identifier, current status, numbered stage indicator |
 | What needs attention? | Attention count and tab, overdue-first ordering, explicit blocker messages       |
-| What is next?         | A next-action column, an “Up next” panel, and one primary handoff action         |
+| What is next?         | A shared immediate-task label in the queue, board, and detail panel; one guarded handoff action |
 | What matters now?     | Stage-specific prerequisites; secondary evidence and history behind tabs         |
 
 A stage describes **where work is**. Attention describes **why someone should intervene**. Keeping both visible avoids treating every order at the same stage as equally urgent.
@@ -40,7 +40,13 @@ A stage describes **where work is**. Attention describes **why someone should in
 | Delivery             | Address, reference, proof                | Confirm delivery and complete           |
 | Order completion     | Confirmed status, history, summary       | Download summary; no further transition |
 
-Completed steps can be inspected. Future steps are visible but unavailable, making sequence and progress clear. Attachments and activity remain available across stages. Optional handoff notes and additional metadata are collapsed until requested.
+Completed steps show read-only information, evidence links, and their recorded approval. Older demo records without a recorded approval say so explicitly. Future steps are visible but unavailable, making sequence and progress clear. Selecting a step opens its Details view, and a successful handoff opens the next stage's task. Attachments and activity remain available across stages. Notes and supporting metadata are collapsed until requested.
+
+At New order, **Edit order details** reuses the intake fields to correct the customer, products, quantities, address, notes, and deadline. Saving validates the order and records the correction. Confirming intake locks those values; later changes would need a business-approved rework policy because payment and stock decisions depend on them.
+
+Stage-specific controls come before supporting information. Payment leads with the expected amount and receipt; stock checking and packing lead with the items; delivery leads with the address, reference, and proof. Payment and delivery provide contextual attachment buttons that open Documents with the correct evidence type. Demo evidence remains available and labeled.
+
+The queue names the work needed now, such as **Confirm packing** or **Attach delivery proof**, before offering a handoff such as **Complete order**. The Delivery stage is labeled **Delivery** because entering it confirms readiness for delivery, without claiming that a courier has dispatched the order.
 
 The approval footer offers one forward action with a separate confirmation. When prerequisites are missing, the action is disabled and the reason is visible next to it. The same constraints exist in the domain functions, so the UI is not the only guard.
 
@@ -53,6 +59,7 @@ The approval footer offers one forward action with a separate confirmation. When
 - Body and table text use a system sans-serif font, with 14 px main text and a 13 px minimum for supporting text. Decorative subtitles, fabricated charts, and promotional copy are removed.
 - Search, owner, priority, and stage filters combine. An empty result provides a clear reset.
 - Intake asks for essentials first. Evidence and operational confirmations appear at the stage that needs them.
+- Delivery deadlines are stored as timestamps and displayed in Philippine time. Overdue detection uses the current time, refreshes every minute, and breaks equal-urgency overdue ties by the oldest deadline. Existing relative labels migrate using the earliest recorded activity date as an approximation.
 - Motion is limited to small interface transitions and honors reduced-motion preferences.
 
 ## Implementation structure
@@ -84,7 +91,7 @@ This prototype demonstrates workflow behavior; it is not a deployed multi-user o
 | Per-order stock quantities       | Shared inventory ledger with atomic reservations and releases                      |
 | Uploaded files in localStorage   | Object storage, access control, upload validation, scanning, signed download links |
 | Seeded payment documents         | Real receipt provenance and payment reconciliation                                 |
-| Relative delivery labels         | Structured dates, business timezone, SLA calculation, overdue automation           |
+| Timestamped deadlines and a browser timer | Server-side reminders, business SLA rules, and overdue automation while nobody has the app open |
 | Local activity entries           | Server-authored, immutable audit events and actor identity                         |
 | Confirmation dialogs             | Permission-aware approvals, rejection/rework routes, cancellation/refund policy    |
 | Sample delivery references       | Courier integration, booking state, failed delivery and return handling            |
@@ -92,3 +99,5 @@ This prototype demonstrates workflow behavior; it is not a deployed multi-user o
 The current stock controls intentionally update an order's demo availability; they do not allocate shared warehouse inventory. Sample evidence is clearly labeled, and none of the actions sends messages, charges money, or books a delivery.
 
 Before production, validate the stage model with operators and include the exception paths the actual business needs: rejected payments, partial fulfillment, cancellations, returns, and failed delivery. Run keyboard, screen reader, mobile, and visual browser checks with representative users. Measure time to identify the next action, time to resolve a blocker, and handoff error rate.
+
+Production implementation should start with authenticated actors and server-enforced transitions, then shared inventory reservations. Agree on who can reject payment, cancel an order, release stock, and retry a failed delivery before implementing those paths. The demo intentionally does not invent refund, partial-fulfillment, or courier policies.

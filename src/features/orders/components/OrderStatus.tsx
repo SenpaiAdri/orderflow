@@ -21,7 +21,7 @@ const statusLabels = [
   "Check payment",
   "Checking stock",
   "Packing",
-  "Out for delivery",
+  "Delivery",
   "Completed",
 ];
 

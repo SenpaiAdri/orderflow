@@ -9,15 +9,18 @@ export function OrderDocuments({
   logChange,
   notify,
   onError,
+  uploadType,
+  onUploadTypeChange,
 }: {
   order: Order;
   active: boolean;
   logChange: (patch: Partial<Order>, text: string) => void;
   notify: (message: string) => void;
   onError: (message: string) => void;
+  uploadType: Attachment["type"];
+  onUploadTypeChange: (type: Attachment["type"]) => void;
 }) {
   const [uploading, setUploading] = useState(false);
-  const [uploadType, setUploadType] = useState<Attachment["type"]>("receipt");
   const fileRef = useRef<HTMLInputElement>(null);
   async function upload(file: File | undefined) {
     if (!file) return;
@@ -121,7 +124,7 @@ export function OrderDocuments({
         <select
           aria-label="Attachment type"
           value={uploadType}
-          onChange={(e) => setUploadType(e.target.value as Attachment["type"])}
+          onChange={(e) => onUploadTypeChange(e.target.value as Attachment["type"])}
         >
           <option value="receipt">Payment receipt</option>
           <option value="delivery">Proof of delivery</option>

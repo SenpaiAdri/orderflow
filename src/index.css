@@ -1680,6 +1680,9 @@ textarea::placeholder {
 .detail-section {
   margin-bottom: 24px;
 }
+.intake-editor { display: grid; gap: 16px; }
+.editor-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+.order-owner { display: block; margin-top: 5px; font-size: 13px; color: var(--color-secondary); }
 .detail-section h3 {
   font-size: 13px;
   font-weight: 600;
@@ -3266,7 +3269,8 @@ input[type="checkbox"] { accent-color: var(--color-ink); width: 20px; height: 20
   tbody tr { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--color-line); }
   tbody tr:last-child { border-bottom: 0; }
   td, td:first-child { border: 0; height: auto; padding: 0; min-width: 0; }
-  td:nth-child(2), td:nth-child(4) { grid-column: 1 / -1; }
+  td:nth-child(2), td:nth-child(4), td:nth-child(5), td:nth-child(6) { grid-column: 1 / -1; }
+  .delivery-due { max-width: 100%; white-space: normal; }
   td:nth-child(3) { grid-column: 2; grid-row: 1; justify-self: end; align-self: start; }
   td:nth-child(7) { display: none; }
   td:nth-child(4)::before, td:nth-child(5)::before, td:nth-child(6)::before { content: attr(data-label); display: block; font-size: 13px; color: var(--color-secondary); margin-bottom: 4px; font-weight: 400; }

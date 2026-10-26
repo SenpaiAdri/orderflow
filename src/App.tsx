@@ -26,6 +26,11 @@ function App() {
   const [createOpen, setCreateOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [toast, setToast] = useState("");
+  const [, refreshDeadlines] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => refreshDeadlines((tick) => tick + 1), 60_000);
+    return () => clearInterval(timer);
+  }, []);
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => setToast(""), 4500);

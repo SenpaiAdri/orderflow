@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { seedOrders } from "@/data/orders";
 import type { Order } from "@/lib/workflow";
+import { migrateDeliveryDue } from "@/lib/delivery";
 const STORE = "orderflow-demo-v1";
 function loadOrders(): Order[] {
   try {
@@ -20,7 +21,10 @@ function loadOrders(): Order[] {
             o.stage <= 5,
         )
       )
-        return data as Order[];
+        return (data as Order[]).map((order) => ({
+          ...order,
+          due: migrateDeliveryDue(order.due, Date.parse(order.activity.at(-1)?.at ?? "") || Date.now()),
+        }));
     }
   } catch {
     /* A fresh demo is safe when browser storage is unavailable. */

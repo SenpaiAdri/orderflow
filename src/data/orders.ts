@@ -1,4 +1,5 @@
 import type { Order, Stage } from "@/lib/workflow";
+import { migrateDeliveryDue } from "@/lib/delivery";
 const receipt = { name: "Payment receipt.pdf", type: "receipt" as const };
 const customers = [
   [
@@ -170,7 +171,7 @@ export const seedOrders: Order[] = customers.map(
     stage: stage as Stage,
     priority,
     issue: issue || undefined,
-    due,
+    due: migrateDeliveryDue(due),
     owner,
     email: `${customer.toLowerCase().replace(" ", ".")}@example.com`,
     address: `${120 + index} Esteban Street, Makati City, Metro Manila`,
