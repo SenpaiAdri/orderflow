@@ -2,7 +2,7 @@
 
 The main design question is: **“Which order needs me, and what should I do next?”**
 
-The prototype assumes a small physical-goods business, a shared operations team, bank-transfer payments, and local delivery. PHP currency and sample Metro Manila addresses ground the demo. All people and business records are fictional.
+The prototype assumes a small physical-goods business, a shared operations team, recorded payment methods, and local delivery. PHP currency and sample Metro Manila addresses ground the demo. All people and business records are fictional.
 
 ## Information architecture
 
@@ -44,15 +44,19 @@ Completed steps show read-only information, evidence links, and their recorded a
 
 At New order, **Edit order details** sits beside **Confirm order** in the action footer and reuses the intake fields to correct the customer, products, quantities, address, notes, and deadline. Saving validates the order and records the correction. Confirming intake locks those values; later changes would need a business-approved rework policy because payment and stock decisions depend on them.
 
-Stage-specific controls come before supporting information. Payment leads with the expected amount and receipt; stock checking and packing lead with the items; delivery leads with the address, reference, and proof. The tabs are removed: the stage task remains on screen, with Order information, Documents, and History as supporting disclosures.
+Stage-specific controls come before supporting information. Payment leads with the expected amount, required payment-method selection, and receipt; stock checking and packing lead with the items; delivery leads with the address, reference, and proof. The tabs are removed: the stage task remains on screen, with Order information, Documents, and History as supporting disclosures.
 
 Missing-evidence actions open the file chooser immediately. The current stage supplies the type: Payment accepts payment receipts, Delivery accepts delivery proof, and other stages cannot upload evidence. The same policy is guarded by `attachStageEvidence` in the domain module. Successful uploads leave the task visible and focus the next handoff or the missing delivery reference after the upload and render finish. Evidence is reviewable inline; attaching another file is secondary. Upload errors appear beside the evidence control. The archive only reviews/downloads existing files, including older supporting documents. Downloading requires an actual stored file; seeded records without one show Original file unavailable. The interface does not generate sample evidence.
 
-Delivery reference and evidence visibly say Required; stock correction and packing confirmation also expose their requirement. The delivery input uses native required semantics. Clicking a blocked handoff focuses the missing reference, shortage quantity, or packing control, or opens the chooser for required evidence. The handoff remains blocked until all business conditions pass.
+Payment method, delivery reference, and evidence visibly say Required; stock correction and packing confirmation also expose their requirement. The delivery input uses native required semantics. Clicking a blocked handoff focuses the missing payment method, reference, shortage quantity, or packing control, or opens the chooser for required evidence. The handoff remains blocked until all business conditions pass.
 
 The queue names the work needed now, such as **Confirm packing** or **Attach delivery proof**, before offering a handoff such as **Complete order**. The Delivery stage is labeled **Delivery** because entering it confirms readiness for delivery, without claiming that a courier has dispatched the order.
 
 The approval footer offers one forward action with a separate confirmation. When prerequisites are missing, the handoff stays visible and muted, with its reason. It remains keyboard and pointer operable to guide the required task, using aria-disabled rather than the native disabled attribute. Expanding documents or history leaves it in place. Past-step inspection keeps the handoff visible but first returns to the current task. Approval confirmation hides the task content and offers only Confirm and Go back. The same constraints exist in the domain functions, so the UI is not the only guard.
+
+Payment offers Bank transfer, GCash, Maya, and Cash without introducing another save action. Selection saves immediately with a history entry and is required before approval. Once approved, the recorded method is read-only, preserving the meaning of the approval. Cash still needs a receipt; cash on delivery would conflict with verification before packing and is outside this sequence. Legacy records that had reached Payment keep the previously displayed Bank transfer value; new orders choose deliberately.
+
+Completed orders download a paginated PDF rather than plain text. The report includes the customer/address, items and centavo-accurate totals, selected payment method, approval times, delivery record, notes, document names, and full history. Fonts and PDF code load only when requested; generation uses local order data. The download button shows progress and keeps retryable errors beside it. Attached files remain separately downloadable.
 
 ## Cognitive load and hierarchy
 

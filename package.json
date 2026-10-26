@@ -7,13 +7,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types src/lib/workflow.test.ts && node --experimental-strip-types src/features/orders/order-filters.test.ts"
+    "test": "node --experimental-strip-types src/lib/workflow.test.ts && node --experimental-strip-types src/features/orders/order-filters.test.ts && node --experimental-strip-types src/features/orders/detail/order-summary.test.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "1.1.15",
     "@radix-ui/react-slot": "1.2.4",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
+    "jspdf": "4.2.1",
     "lucide-react": "0.575.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",

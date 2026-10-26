@@ -22,6 +22,7 @@ function order(id: string, overrides: Partial<Order> = {}): Order {
     note: "",
     tracking: "",
     prepared: false,
+    paymentMethod: "Bank transfer",
     ...overrides,
   };
 }

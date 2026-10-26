@@ -61,6 +61,7 @@ export function CreateOrder({
       note: note.trim(),
       tracking: "",
       prepared: false,
+      paymentMethod: "",
       activity: [
         { text: "Order created by Alex Morgan", at: new Date().toISOString() },
       ],

@@ -1,6 +1,6 @@
 import { CheckCircle2, ChevronDown, FileText } from "lucide-react";
 import { owners } from "@/data/team";
-import { STAGES, stageApproval, type Order } from "@/lib/workflow";
+import { STAGES, stageApproval, selectPaymentMethod, type Order } from "@/lib/workflow";
 import { formatTime } from "@/lib/format";
 import { OrderItems } from "./OrderItems";
 import { PaymentDetails, PackingConfirmation, DeliveryDetails } from "./OrderStageDetails";
@@ -39,7 +39,7 @@ export function OrderOverview({ order, inspected, logChange, update, onUpload, u
         </div>
       )}
 
-      {inspected === 1 && <PaymentDetails order={order} editing={current && order.stage === 1} onUpload={onUpload} uploading={uploading} guided={guided} error={current ? error : ""} />}
+      {inspected === 1 && <PaymentDetails onMethodChange={(method) => update(selectPaymentMethod(order, method))} order={order} editing={current && order.stage === 1} onUpload={onUpload} uploading={uploading} guided={guided} error={current ? error : ""} />}
       {(inspected === 0 || inspected === 2 || inspected === 3) && items}
       {inspected === 3 && <PackingConfirmation order={order} editing={current} logChange={logChange} />}
       {(inspected === 0 || inspected === 4 || inspected === 5) && delivery}

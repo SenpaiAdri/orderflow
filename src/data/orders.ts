@@ -198,6 +198,7 @@ export const seedOrders: Order[] = customers.map(
           ? [receipt, { name: "Delivery confirmation.jpg", type: "delivery" }]
           : [receipt],
     prepared: stage >= 4,
+    paymentMethod: stage > 0 ? "Bank transfer" : "",
     note:
       index === 0
         ? "Please wrap the mugs individually. Receiving hours: 9 AM–5 PM."

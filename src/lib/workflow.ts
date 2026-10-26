@@ -17,6 +17,8 @@ export const ACTIONS = [
   "View summary",
 ] as const;
 export type Stage = 0 | 1 | 2 | 3 | 4 | 5;
+export const PAYMENT_METHODS = ["Bank transfer", "GCash", "Maya", "Cash"] as const;
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 export type Priority = "normal" | "urgent";
 export interface Item {
   name: string;
@@ -54,6 +56,7 @@ export interface Order {
   activity: Activity[];
   tracking: string;
   prepared: boolean;
+  paymentMethod: PaymentMethod | "";
 }
 export interface Readiness {
   ready: boolean;
@@ -76,6 +79,8 @@ export function readiness(order: Order): Readiness {
     return { ready: false, reason: "Choose a delivery deadline before confirming." };
   if (order.stage === 0 && new Set(order.items.map((item) => item.sku)).size !== order.items.length)
     return { ready: false, reason: "Each product should appear once. Remove the duplicate and update its quantity." };
+  if (order.stage === 1 && !PAYMENT_METHODS.some((method) => method === order.paymentMethod))
+    return { ready: false, reason: "Select a payment method before approving payment." };
   if (order.stage === 1 && !order.attachments.some((a) => a.type === "receipt"))
     return {
       ready: false,
@@ -100,6 +105,23 @@ export function readiness(order: Order): Readiness {
     return { ready: false, reason: "Attach proof of delivery before completing this order." };
   return { ready: true, reason: "" };
 }
+export function migratePaymentMethod(order: { stage: Stage; paymentMethod?: unknown }): PaymentMethod | "" {
+  if (order.paymentMethod === undefined) return order.stage > 0 ? "Bank transfer" : "";
+  return PAYMENT_METHODS.find((method) => method === order.paymentMethod) ?? "";
+}
+
+export function selectPaymentMethod(order: Order, method: string): Order {
+  if (order.stage !== 1) throw new Error("Payment method can only be changed during Payment.");
+  const paymentMethod = PAYMENT_METHODS.find((value) => value === method);
+  if (!paymentMethod) throw new Error("Choose a payment method from the list.");
+  if (order.paymentMethod === paymentMethod) return order;
+  return {
+    ...order,
+    paymentMethod,
+    activity: [{ text: `Payment method set to ${paymentMethod} by Alex Morgan`, at: new Date().toISOString() }, ...order.activity],
+  };
+}
+
 export function stageEvidenceType(stage: Stage): Attachment["type"] | null {
   return stage === 1 ? "receipt" : stage === 4 ? "delivery" : null;
 }
@@ -136,6 +158,7 @@ export function advanceOrder(order: Order): Order {
 }
 export function nextAction(order: Order): string {
   if (order.stage === 0 && !readiness(order).ready) return "Edit order details";
+  if (order.stage === 1 && !PAYMENT_METHODS.some((method) => method === order.paymentMethod)) return "Select payment method";
   if (order.stage === 1 && !readiness(order).ready) return "Add payment receipt";
   if (order.stage === 2 && !readiness(order).ready) return "Update stock";
   if (order.stage === 3 && !order.prepared) return "Confirm packing";
@@ -180,10 +203,13 @@ export const money = (amount: number) =>
   new Intl.NumberFormat("en-PH", {
     style: "currency",
     currency: "PHP",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
   }).format(amount);
 export function attentionReason(order: Order): string | undefined {
   if (order.stage === 5) return undefined;
+  if (order.stage === 1 && !PAYMENT_METHODS.some((method) => method === order.paymentMethod))
+    return "Payment method needed";
   if (order.stage === 1 && !order.attachments.some((a) => a.type === "receipt"))
     return "Missing payment receipt";
   if (order.stage === 2 && order.items.some((i) => i.stock < i.qty))

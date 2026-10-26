@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Download, ShieldCheck } from "lucide-react";
+import { ArrowRight, Download, LoaderCircle, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { formatTime } from "@/lib/format";
 import {
   ACTIONS,
   STAGES,
   advanceOrder,
-  money,
   readiness,
-  total,
   type Order,
 } from "@/lib/workflow";
 
@@ -34,6 +31,8 @@ export function OrderActions({
   onReturn: () => void;
 }) {
   const [confirm, setConfirm] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [summaryError, setSummaryError] = useState("");
   useEffect(() => {
     setConfirm(false);
   }, [order.id, order.stage, viewingCurrent]);
@@ -48,29 +47,29 @@ export function OrderActions({
     }
   }
 
+  async function downloadSummary() {
+    if (downloading) return;
+    setSummaryError("");
+    setDownloading(true);
+    try {
+      const { downloadOrderSummary } = await import("./download-order-summary");
+      await downloadOrderSummary(order);
+    } catch {
+      setSummaryError("Unable to create the PDF. Try downloading again.");
+    } finally {
+      setDownloading(false);
+    }
+  }
+
 
   return (
     <div className="detail-footer">
       {order.stage === 5 ? (
         <>
-          <Button
-            onClick={() => {
-              const blob = new Blob(
-                [
-                  `${order.id} — Order summary\n${order.customer} · ${order.company}\nTotal: ${money(total(order))}\nStatus: Completed\n\n${order.activity.map((a) => `${formatTime(a.at)} — ${a.text}`).join("\n")}`,
-                ],
-                { type: "text/plain" },
-              );
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a");
-              a.href = url;
-              a.download = `${order.id}-summary.txt`;
-              a.click();
-              URL.revokeObjectURL(url);
-            }}
-          >
-            <Download size={14} />
-            Download summary
+          {summaryError && <p className="inline-error w-full" role="alert">{summaryError}</p>}
+          <Button disabled={downloading} onClick={() => void downloadSummary()}>
+            {downloading ? <LoaderCircle size={14} className="animate-spin" /> : <Download size={14} />}
+            {downloading ? "Preparing PDF…" : "Download summary (PDF)"}
           </Button>
         </>
       ) : confirm ? (

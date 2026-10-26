@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { seedOrders } from "@/data/orders";
-import type { Order } from "@/lib/workflow";
+import { migratePaymentMethod, type Order } from "@/lib/workflow";
 import { migrateDeliveryDue } from "@/lib/delivery";
 const STORE = "orderflow-demo-v1";
 function loadOrders(): Order[] {
@@ -23,6 +23,7 @@ function loadOrders(): Order[] {
       )
         return (data as Order[]).map((order) => ({
           ...order,
+          paymentMethod: migratePaymentMethod(order),
           due: migrateDeliveryDue(order.due, Date.parse(order.activity.at(-1)?.at ?? "") || Date.now()),
         }));
     }

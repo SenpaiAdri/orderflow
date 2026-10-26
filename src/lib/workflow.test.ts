@@ -2,6 +2,10 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   advanceOrder,
+  PAYMENT_METHODS,
+  money,
+  selectPaymentMethod,
+  migratePaymentMethod,
   attachStageEvidence,
   stageEvidenceType,
   readiness,
@@ -33,6 +37,7 @@ function order(overrides: Partial<Order> = {}): Order {
     note: "",
     tracking: "",
     prepared: false,
+    paymentMethod: "Bank transfer",
     ...overrides,
   };
 }
@@ -97,8 +102,9 @@ test("completion requires both tracking and delivery proof", () => {
   );
 });
 test("a complete order passes through all six stages with an audit entry for each handoff", () => {
-  let o = order();
+  let o = order({ paymentMethod: "" });
   o = advanceOrder(o);
+  o = selectPaymentMethod(o, "GCash");
   o = { ...o, attachments: [{ name: "receipt.pdf", type: "receipt" }] };
   o = advanceOrder(o);
   o = advanceOrder(o);
@@ -111,7 +117,8 @@ test("a complete order passes through all six stages with an audit entry for eac
   };
   o = advanceOrder(o);
   assert.equal(o.stage, 5);
-  assert.equal(o.activity.length, 5);
+  assert.equal(o.activity.filter((entry) => entry.completedStage !== undefined).length, 5);
+  assert.equal(o.paymentMethod, "GCash");
   assert.throws(() => advanceOrder(o), /complete/);
   assert.equal(total(o), 2880);
 });
@@ -237,4 +244,40 @@ test("evidence uploads accept only the document needed at the current stage", ()
     }
   }
   assert.throws(() => attachStageEvidence(order({ stage: 1 }), { ...receipt, data: undefined }), /Choose a file/);
+});
+
+
+test("payment method is required, stage-guarded, and retained with its approval", () => {
+  const unpaid = order({ stage: 1, paymentMethod: "", attachments: [{ name: "receipt.pdf", type: "receipt" }] });
+  assert.throws(() => advanceOrder(unpaid), /payment method/);
+  assert.equal(nextAction(unpaid), "Select payment method");
+  assert.equal(attentionReason(unpaid), "Payment method needed");
+  for (const method of PAYMENT_METHODS) {
+    const selected = selectPaymentMethod(unpaid, method);
+    assert.equal(selected.paymentMethod, method);
+    assert.equal(selected.activity.length, 1);
+    assert.equal(selectPaymentMethod(selected, method), selected);
+    assert.equal(advanceOrder(selected).paymentMethod, method);
+  }
+  assert.throws(() => selectPaymentMethod(unpaid, "Unsupported"), /from the list/);
+  for (const stage of [0, 2, 3, 4, 5] as const)
+    assert.throws(() => selectPaymentMethod({ ...unpaid, stage }, "GCash"), /during Payment/);
+  assert.equal(unpaid.paymentMethod, "");
+});
+
+test("legacy payment methods migrate without replacing explicit choices", () => {
+  assert.equal(migratePaymentMethod({ stage: 0 }), "");
+  for (const stage of [1, 2, 3, 4, 5] as const)
+    assert.equal(migratePaymentMethod({ stage }), "Bank transfer");
+  assert.equal(migratePaymentMethod({ stage: 1, paymentMethod: "" }), "");
+  assert.equal(migratePaymentMethod({ stage: 4, paymentMethod: "GCash" }), "GCash");
+  assert.equal(migratePaymentMethod({ stage: 1, paymentMethod: "Unsupported" }), "");
+});
+
+
+test("order amounts preserve centavos", () => {
+  const value = order({ items: [{ name: "Mug", sku: "MUG", qty: 6, price: 480.25, stock: 10 }] });
+  assert.equal(total(value), 2881.5);
+  assert.equal(money(total(value)), "₱2,881.5");
+  assert.equal(money(2880), "₱2,880");
 });

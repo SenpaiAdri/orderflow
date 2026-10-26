@@ -60,9 +60,10 @@ export function OrderDetail({
   }, [order.stage, order.id]);
   function focusTask() {
     requestAnimationFrame(() => {
+      const payment = !order.paymentMethod && contentRef.current?.querySelector<HTMLSelectElement>("select[name=payment-method]");
       const reference = !order.tracking.trim() && contentRef.current?.querySelector<HTMLInputElement>("input[name='delivery-reference']");
       const action = contentRef.current?.querySelector<HTMLButtonElement>(".detail-footer button:last-child");
-      (reference || action)?.focus();
+      (payment || reference || action)?.focus();
     });
   }
   function resolveRequirement() {
@@ -70,14 +71,14 @@ export function OrderDetail({
     setGuided(true);
     setError("");
     if (order.stage === 0) { setEditing(true); return; }
-    if (order.stage === 1 || (order.stage === 4 && order.tracking.trim())) {
+    if ((order.stage === 1 && order.paymentMethod) || (order.stage === 4 && order.tracking.trim())) {
       contentRef.current?.querySelector<HTMLButtonElement>("[data-evidence-upload]")?.focus();
       chooseFile();
       return;
     }
     requestAnimationFrame(() => {
-      const selector = order.stage === 2 ? ".stock-resolution input" : order.stage === 3 ? ".check-row input" : "input[name='delivery-reference']";
-      const target = contentRef.current?.querySelector<HTMLInputElement>(selector);
+      const selector = order.stage === 1 ? "select[name=payment-method]" : order.stage === 2 ? ".stock-resolution input" : order.stage === 3 ? ".check-row input" : "input[name='delivery-reference']";
+      const target = contentRef.current?.querySelector<HTMLInputElement | HTMLSelectElement>(selector);
       target?.focus();
       target?.scrollIntoView({ block: "center", behavior: "smooth" });
     });

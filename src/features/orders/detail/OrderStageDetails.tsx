@@ -3,7 +3,7 @@ import { DeliveryDue } from "../components/DeliveryDue";
 import { StageIcon } from "../components/OrderStatus";
 import { Button } from "@/components/ui/button";
 import { OrderDocuments } from "./OrderDocuments";
-import { money, total, type Order, type Attachment } from "@/lib/workflow";
+import { PAYMENT_METHODS, money, total, type Order, type Attachment } from "@/lib/workflow";
 
 function StageEvidence({ order, type, editing, onUpload, uploading, guided, error }: {
   order: Order;
@@ -33,7 +33,7 @@ function StageEvidence({ order, type, editing, onUpload, uploading, guided, erro
         <div className="evidence-row">
           <span>{label} <span className="required-label">Required</span></span>
           <Button size="sm" disabled={uploading} data-evidence-upload onClick={onUpload}
-            aria-describedby={guided && (type === "receipt" || order.tracking.trim()) ? "stage-requirement" : undefined}>
+            aria-describedby={guided && (type === "receipt" ? Boolean(order.paymentMethod) : Boolean(order.tracking.trim())) ? "stage-requirement" : undefined}>
             {uploading ? <LoaderCircle size={14} className="animate-spin" /> : <Upload size={14} />}
             {uploading ? "Uploading…" : action}
           </Button>
@@ -43,10 +43,11 @@ function StageEvidence({ order, type, editing, onUpload, uploading, guided, erro
   );
 }
 
-export function PaymentDetails({ order, onUpload, editing, uploading, guided, error }: {
+export function PaymentDetails({ order, onUpload, editing, uploading, guided, error, onMethodChange }: {
   order: Order;
   onUpload: () => void;
   editing: boolean;
+  onMethodChange: (method: string) => void;
   uploading: boolean;
   guided: boolean;
   error: string;
@@ -56,7 +57,16 @@ export function PaymentDetails({ order, onUpload, editing, uploading, guided, er
       <h3><StageIcon stage={1} size={16} />{editing ? "Check payment" : "Payment summary"}</h3>
       <div className="payment-summary">
         <span>Expected payment<strong>{money(total(order))}</strong></span>
-        <span>Method<strong>Bank transfer</strong></span>
+        {editing ? <label className="field-label">
+          <span className="flex items-center justify-between gap-4">Payment method <span className="required-label">Required</span></span>
+          <select name="payment-method" required value={order.paymentMethod}
+            aria-invalid={guided && !order.paymentMethod || undefined}
+            aria-describedby={guided && !order.paymentMethod ? "stage-requirement" : undefined}
+            onChange={(event) => onMethodChange(event.target.value)}>
+            <option value="" disabled>Select payment method</option>
+            {PAYMENT_METHODS.map((method) => <option key={method}>{method}</option>)}
+          </select>
+        </label> : <span>Payment method<strong>{order.paymentMethod || "Not recorded"}</strong></span>}
       </div>
       <StageEvidence order={order} type="receipt" editing={editing} onUpload={onUpload} uploading={uploading} guided={guided} error={error} />
     </section>

@@ -7,7 +7,8 @@
   padding: 14px;
 }
 
-.payment-summary > span {
+.payment-summary > span,
+.payment-summary > label {
   font-size: 13px;
   color: var(--color-secondary);
 }
@@ -296,3 +297,10 @@
 .evidence-details summary > span { display: flex; align-items: center; gap: 8px; }
 .evidence-details > .ui-button { margin-top: 12px; }
 input[aria-invalid="true"] { border-color: var(--attention-ink); }
+
+.payment-summary > .field-label { margin: 0; flex: 1; max-width: 300px; }
+.payment-summary select { margin-top: 7px; }
+@media (max-width: 700px) {
+  .payment-summary { gap: 20px; flex-wrap: wrap; }
+  .payment-summary > .field-label { min-width: 190px; }
+}
