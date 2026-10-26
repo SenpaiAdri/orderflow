@@ -3,14 +3,14 @@
   overflow-x: auto;
 }
 
-table {
+.orders-section table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
   white-space: nowrap;
 }
 
-th {
+.orders-section th {
   font-size: 13px;
   font-weight: 500;
   color: var(--color-secondary);
@@ -19,17 +19,17 @@ th {
   padding: 12px 10px;
 }
 
-th:first-child {
+.orders-section th:first-child {
   padding-left: 21px;
 }
 
-th svg {
+.orders-section th svg {
   display: inline;
   vertical-align: middle;
   margin-left: 4px;
 }
 
-td {
+.orders-section td {
   font-size: 13px;
   padding: 15px 10px;
   border-bottom: 1px solid var(--color-line);
@@ -37,20 +37,20 @@ td {
   color: var(--color-ink);
 }
 
-td:first-child {
+.orders-section td:first-child {
   padding-left: 21px;
 }
 
-tbody tr:last-child td {
+.orders-section tbody tr:last-child td {
   border-bottom: 0;
 }
 
-tbody tr {
+.orders-section tbody tr {
   cursor: pointer;
   transition: background 0.12s;
 }
 
-tbody tr:hover {
+.orders-section tbody tr:hover {
   background: var(--color-canvas);
 }
 
@@ -166,11 +166,11 @@ tbody tr:hover {
     font-size: 13px;
   }
 
-  td {
+  .orders-section td {
     font-size: 13px;
   }
 
-  th {
+  .orders-section th {
     font-size: 13px;
   }
 
@@ -188,7 +188,7 @@ tbody tr:hover {
 }
 
 @media (max-width: 700px) {
-  td {
+  .orders-section td {
     height: 76px;
     padding: 13px 10px;
   }
@@ -203,11 +203,11 @@ tbody tr:hover {
   }
 }
 
-th {
+.orders-section th {
   font-weight: 600;
 }
 
-td,
+.orders-section td,
 .order-id,
 .amount,
 .next-action {
@@ -245,13 +245,13 @@ td,
     padding: 0 14px;
   }
 
-  table,
-  tbody {
+  .orders-section table,
+  .orders-section tbody {
     display: block;
     white-space: normal;
   }
 
-  thead {
+  .orders-section thead {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -259,7 +259,7 @@ td,
     clip-path: inset(50%);
   }
 
-  tbody tr {
+  .orders-section tbody tr {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
@@ -267,39 +267,39 @@ td,
     border-bottom: 1px solid var(--color-line);
   }
 
-  tbody tr:last-child {
+  .orders-section tbody tr:last-child {
     border-bottom: 0;
   }
 
-  td,
-  td:first-child {
+  .orders-section td,
+  .orders-section td:first-child {
     border: 0;
     height: auto;
     padding: 0;
     min-width: 0;
   }
 
-  td:nth-child(2),
-  td:nth-child(4),
-  td:nth-child(5),
-  td:nth-child(6) {
+  .orders-section td:nth-child(2),
+  .orders-section td:nth-child(4),
+  .orders-section td:nth-child(5),
+  .orders-section td:nth-child(6) {
     grid-column: 1 / -1;
   }
 
-  td:nth-child(3) {
+  .orders-section td:nth-child(3) {
     grid-column: 2;
     grid-row: 1;
     justify-self: end;
     align-self: start;
   }
 
-  td:nth-child(7) {
+  .orders-section td:nth-child(7) {
     display: none;
   }
 
-  td:nth-child(4)::before,
-  td:nth-child(5)::before,
-  td:nth-child(6)::before {
+  .orders-section td:nth-child(4)::before,
+  .orders-section td:nth-child(5)::before,
+  .orders-section td:nth-child(6)::before {
     content: attr(data-label);
     display: block;
     font-size: 13px;
@@ -318,18 +318,18 @@ td,
 }
 
 @media (max-width: 700px) {
-  tbody tr {
+  .orders-section tbody tr {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 8px 12px;
     padding: 14px 0;
   }
 
-  td:nth-child(4)::before,
-  td:nth-child(6)::before { display: none; }
+  .orders-section td:nth-child(4)::before,
+  .orders-section td:nth-child(6)::before { display: none; }
 
-  td:nth-child(5) { grid-column: 1; min-width: 0; }
-  td:nth-child(6) { grid-column: 2; align-self: end; text-align: right; }
-  td:nth-child(5)::before { content: "Delivery due (PHT)"; }
+  .orders-section td:nth-child(5) { grid-column: 1; min-width: 0; }
+  .orders-section td:nth-child(6) { grid-column: 2; align-self: end; text-align: right; }
+  .orders-section td:nth-child(5)::before { content: "Delivery due (PHT)"; }
   .delivery-due { padding: 3px 0; white-space: normal; }
   .delivery-due .due-full { display: none; }
   .delivery-due .due-brief { display: inline; }

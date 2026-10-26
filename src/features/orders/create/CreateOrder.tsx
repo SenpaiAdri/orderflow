@@ -8,14 +8,17 @@ import {
 } from "@/components/ui/dialog";
 import { money, type Order } from "@/lib/workflow";
 import { CustomerFields, type CustomerDetails } from "./CustomerFields";
-import { OrderItemFields, products } from "./OrderItemFields";
+import { OrderItemFields } from "./OrderItemFields";
+import type { Product } from "@/lib/inventory";
 import { deliveryInput, deliveryISO, migrateDeliveryDue } from "@/lib/delivery";
 export function CreateOrder({
   onCreate,
   nextId,
+  products,
 }: {
   onCreate: (o: Order) => void;
   nextId: string;
+  products: Product[];
 }) {
   const [customerDetails, setCustomerDetails] = useState<CustomerDetails>({
     customer: "",
@@ -75,7 +78,7 @@ export function CreateOrder({
       </div>
       <form onSubmit={submit}>
         <CustomerFields value={customerDetails} onChange={setCustomerDetails} />
-        <OrderItemFields item={item} onChange={setItem} />
+        <OrderItemFields item={item} products={products} onChange={setItem} />
         <div className="form-grid">
           <label className="field-label">
             Delivery due (Philippine time)

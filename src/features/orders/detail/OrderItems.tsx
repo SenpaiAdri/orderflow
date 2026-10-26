@@ -57,6 +57,7 @@ export function OrderItems({
           logChange({ items, issue: items.every((item) => item.stock >= item.qty) ? undefined : order.issue }, "Available stock updated");
         }}>
           <h4 className="flex justify-between items-center">Update available stock <span className="required-label">Required</span></h4>
+          <p className="field-hint">Enter the total available to reserve. This updates shared stock for all waiting orders.</p>
           {order.items
             .filter((i) => i.stock < i.qty)
             .map((item) => (

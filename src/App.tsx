@@ -19,7 +19,7 @@ import { filterOrders } from "@/features/orders/order-filters";
 import type { Order } from "@/lib/workflow";
 
 function App() {
-  const { orders, storageError, updateOrder, createOrder } = useOrders();
+  const { orders, products, storageError, updateOrder, createOrder, addProduct, adjustStock } = useOrders();
   const [page, setPage] = useState<WorkspacePage>("Orders");
   const [orderLayout, setOrderLayout] = useState<"list" | "board">("list");
   const [filters, setFilters] = useState<OrderFilters>(defaultOrderFilters);
@@ -68,7 +68,7 @@ function App() {
               {page === "Orders"
                 ? "Orders"
                 : page === "Inventory"
-                  ? "Stock checks"
+                  ? "Inventory"
                   : "Order history"}
             </h1>
           </div>
@@ -106,7 +106,8 @@ function App() {
             onOpen={setSelectedId}
           />
         ) : page === "Inventory" ? (
-          <StockPage orders={orders} onOpen={setSelectedId} />
+          <StockPage orders={orders} products={products} onOpen={setSelectedId}
+            onAdd={addProduct} onAdjust={adjustStock} notify={setToast} />
         ) : (
           <ActivityPage orders={orders} onOpen={setSelectedId} />
         )}
@@ -120,6 +121,7 @@ function App() {
         {selected && (
           <OrderDetail
             order={selected}
+            products={products}
             update={updateOrder}
             notify={setToast}
           />
@@ -127,6 +129,7 @@ function App() {
       </Dialog>
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
         <CreateOrder
+          products={products}
           onCreate={handleCreate}
           nextId={`ORD-${Math.max(1048, ...orders.map((order) => Number(order.id.split("-")[1]) || 0)) + 1}`}
         />

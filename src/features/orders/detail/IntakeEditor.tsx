@@ -4,9 +4,10 @@ import { CustomerFields } from "../create/CustomerFields";
 import { OrderItemFields } from "../create/OrderItemFields";
 import { deliveryInput, deliveryISO } from "@/lib/delivery";
 import { editIntake, money, total, type Order } from "@/lib/workflow";
+import type { Product } from "@/lib/inventory";
 
-export function IntakeEditor({ order, onSave, onCancel }: {
-  order: Order; onSave: (order: Order) => void; onCancel: () => void;
+export function IntakeEditor({ order, products, onSave, onCancel }: {
+  order: Order; products: Product[]; onSave: (order: Order) => void; onCancel: () => void;
 }) {
   const [draft, setDraft] = useState(order);
   const [error, setError] = useState("");
@@ -20,7 +21,7 @@ export function IntakeEditor({ order, onSave, onCancel }: {
       <h3>Edit order details</h3>
       <CustomerFields autoFocus value={draft} onChange={(fields) => setDraft({ ...draft, ...fields })} />
       {draft.items.map((item, index) => <div key={index}>
-        <OrderItemFields item={item}
+        <OrderItemFields item={item} products={products}
           onChange={(item) => setDraft({ ...draft, items: draft.items.map((old, i) => i === index ? item : old) })} />
         {draft.items.length > 1 && <Button type="button" variant="ghost" size="sm"
           onClick={() => setDraft({ ...draft, items: draft.items.filter((_, i) => i !== index) })}>Remove {item.name}</Button>}

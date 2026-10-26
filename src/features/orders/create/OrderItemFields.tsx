@@ -1,11 +1,8 @@
 import { money, type Item } from "@/lib/workflow";
 
-export const products = [
-  { name: "Everyday ceramic mug", sku: "CER-001", price: 480, stock: 42 },
-  { name: "Linen table runner", sku: "LIN-024", price: 1250, stock: 18 },
-];
+import type { Product } from "@/lib/inventory";
 
-export function OrderItemFields({ item, onChange }: { item: Item; onChange: (item: Item) => void }) {
+export function OrderItemFields({ item, products, onChange }: { item: Item; products: Product[]; onChange: (item: Item) => void }) {
   return (
     <div className="form-grid product-fields">
       <label className="field-label">

@@ -59,9 +59,7 @@ export function Sidebar({
           >
             <Icon size={18} />
             <span>
-              {name === "Inventory"
-                ? "Stock checks"
-                : name === "Activity"
+              {name === "Activity"
                   ? "Order history"
                   : name}
             </span>

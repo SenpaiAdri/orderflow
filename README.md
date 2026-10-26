@@ -48,7 +48,7 @@ src/
       export-orders.ts      # CSV download
       useOrders.ts          # Browser persistence and order updates
       status.css            # Status, action, and delivery-date palette
-    stock/                  # Stock-check page and order cards
+    stock/                  # Stock checks, full catalogue, and stock adjustments
     activity/               # Workspace order history
   data/                     # Fictional orders and team members
   lib/                      # Workflow rules, formatting, and shared helpers
@@ -77,6 +77,8 @@ The existing shadcn/ui Button and Dialog primitives use Tailwind utilities, with
 - Upload and download attachments, using PDF, PNG, JPG, or text files up to 2 MB.
 - Attach payment receipts and delivery proof directly from their stage tasks. The stage assigns the document type automatically; other stages and the read-only Documents archive cannot upload files. Downloads are available for stored files; seeded records without a file show Original file unavailable.
 - Notes, per-order history, a workspace activity feed, and inventory exceptions.
+- Inventory with Stock checks and All stock views. Search every product, filter shortages or out-of-stock items, inspect waiting demand, add products, and adjust available quantities with a reason. Products with no waiting orders remain visible and manageable.
+- Shared demo availability: replenishment updates all unreserved orders; reserving an order deducts its quantities once and rechecks competing orders. Approved orders keep their original stock snapshot. New products are available in intake.
 - CSV export of the currently filtered order list; downloadable PDF summaries with customer details, itemized prices and totals, payment, delivery, notes, document names, and complete history.
 - Browser persistence, responsive layouts, reduced-motion support, and a search keyboard shortcut.
 
@@ -95,7 +97,7 @@ Read [DESIGN.md](./DESIGN.md) for the UX rationale, evaluation mapping, and prod
 
 ## Storage and reset
 
-Orders and attachments are saved under `orderflow-demo-v1` in localStorage. To reset, clear this key in browser developer tools and refresh:
+Orders, attachments, and the product catalogue are saved together under `orderflow-demo-v1` in localStorage. To reset, clear this key in browser developer tools and refresh:
 
 ```js
 localStorage.removeItem("orderflow-demo-v1");
@@ -104,11 +106,15 @@ location.reload();
 
 Browser storage is limited; a visible warning appears if saving fails. Use sample documents or small files for the demo. Do not use real customer or payment data.
 
+The older order-array format migrates to a combined orders/catalogue snapshot under the same key. Each SKU uses its lowest saved unreserved availability to preserve existing shortages; approved order quantities and history remain unchanged. Fictional tea towels and trays demonstrate products with no order demand. Availability means units free to reserve, rather than total physical stock. Local reservations do not provide concurrency protection between browser tabs or users.
+
 Older saved delivery labels are converted once to timestamps using the date of the earliest recorded order activity. That date is an approximation because the old format did not preserve an actual deadline. New orders use a date and time explicitly labeled as Philippine time; deadlines and attention counts refresh every minute while the app is open.
 
 ## Verification
 
-Strict TypeScript checks and the production build pass. Twenty-three tests cover combined list filters, attention ordering, required intake information and valid items, guarded intake corrections, next-action labels, retained approval records, deadline migration and time zones, stage-restricted evidence uploads, required payment methods and legacy migration, PDF generation and pagination, centavo precision, payment proof, shortages, packing confirmation, delivery evidence, attention detection, and a full six-stage journey.
+Strict TypeScript checks and the production build pass. Thirty-one tests cover combined list filters, attention ordering, required intake information and valid items, guarded intake corrections, next-action labels, retained approval records, deadline migration and time zones, stage-restricted evidence uploads, required payment methods and legacy migration, PDF generation and pagination, centavo precision, payment proof, shortages, packing confirmation, delivery evidence, attention detection, a full six-stage journey, catalogue migration, validated stock adjustments, shared replenishment, competing reservations, multi-product deductions, and preserved historical stock snapshots.
+
+Inventory browser checks used isolated Chrome contexts. They covered the full catalogue and products with no orders, SKU search, out-of-stock/shortage filters and empty states, duplicate SKU rejection, adding a product and creating an order from it, reasoned replenishment, order-level stock correction, reservation deductions, refresh persistence, and migration from the legacy order array while preserving a custom SKU and prior approvals. The catalogue was inspected on desktop and at 390 px, with no page overflow on mobile. Checks verified dialog focus trapping, Escape, focus return, and search focus when replenishment removes a filtered row. No console errors were observed. Full screen-reader and operator usability tests remain outstanding.
 
 The October 2026 workflow fixes were checked in Chrome DevTools at desktop and an emulated 390 px mobile viewport. Checks covered attention filtering, intake corrections, missing payment proof, payment and delivery file uploads with the correct document type, stock replenishment, packing confirmation, completion, read-only stage evidence and approvals, order creation, refresh persistence, and modal keyboard focus. Mobile dates do not overlap amounts, the current step is visible in the progress strip, and the page fits without horizontal overflow. A full screen reader audit and testing with real operators remain outstanding.
 

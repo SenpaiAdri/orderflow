@@ -180,7 +180,7 @@
 }
 .orders-section [data-stage] .next-action,
 .orders-section [data-stage] .next-action svg {
-  color: var(--stage-ink);
+  color: var(--color-ink);
 }
 .orders-section .action-sub {
   color: var(--attention-ink);

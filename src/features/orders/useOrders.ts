@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { seedOrders } from "@/data/orders";
+import { seedProducts } from "@/data/products";
 import { migratePaymentMethod, type Order } from "@/lib/workflow";
 import { migrateDeliveryDue } from "@/lib/delivery";
+import { addProduct, adjustStock, migrateInventory, syncAvailability, updateWorkspaceOrder, validProduct, type Product, type Workspace } from "@/lib/inventory";
 const STORE = "orderflow-demo-v1";
-function loadOrders(): Order[] {
+function loadWorkspace(): Workspace {
   try {
     const saved = localStorage.getItem(STORE);
     if (saved) {
-      const data: unknown = JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      const data: unknown = Array.isArray(parsed) ? parsed : parsed.orders;
       if (
         Array.isArray(data) &&
         data.every(
@@ -20,38 +23,51 @@ function loadOrders(): Order[] {
             o.stage >= 0 &&
             o.stage <= 5,
         )
-      )
-        return (data as Order[]).map((order) => ({
+      ) {
+        const orders = (data as Order[]).map((order) => ({
           ...order,
           paymentMethod: migratePaymentMethod(order),
           due: migrateDeliveryDue(order.due, Date.parse(order.activity.at(-1)?.at ?? "") || Date.now()),
         }));
+        const products: Product[] = Array.isArray(parsed) ? migrateInventory(orders, seedProducts) : parsed.products;
+        if (!Array.isArray(products) || !products.length || !products.every(validProduct) || new Set(products.map((product) => product.sku)).size !== products.length)
+          throw new Error("Invalid inventory");
+        return syncAvailability({ orders, products });
+      }
     }
   } catch {
     /* A fresh demo is safe when browser storage is unavailable. */
   }
-  return seedOrders;
+  return syncAvailability({ orders: seedOrders, products: migrateInventory(seedOrders, seedProducts) });
 }
 
 export function useOrders() {
-  const [orders, setOrders] = useState<Order[]>(loadOrders);
+  const [workspace, setWorkspace] = useState<Workspace>(loadWorkspace);
+  const current = useRef(workspace);
   const [storageError, setStorageError] = useState(false);
   useEffect(() => {
     try {
-      localStorage.setItem(STORE, JSON.stringify(orders));
+      localStorage.setItem(STORE, JSON.stringify(workspace));
       setStorageError(false);
     } catch {
       setStorageError(true);
     }
-  }, [orders]);
+  }, [workspace]);
 
+  // Async evidence uploads must use the latest inventory snapshot.
+  function save(next: Workspace) {
+    current.current = next;
+    setWorkspace(next);
+  }
   function updateOrder(next: Order) {
-    setOrders((previous) =>
-      previous.map((order) => (order.id === next.id ? next : order)),
-    );
+    save(updateWorkspaceOrder(current.current, next));
   }
   function createOrder(order: Order) {
-    setOrders((previous) => [order, ...previous]);
+    save(syncAvailability({ ...current.current, orders: [order, ...current.current.orders] }));
   }
-  return { orders, storageError, updateOrder, createOrder };
+  return {
+    ...workspace, storageError, updateOrder, createOrder,
+    addProduct: (product: Product) => save(addProduct(current.current, product)),
+    adjustStock: (sku: string, stock: number, reason: string) => save(adjustStock(current.current, sku, stock, reason)),
+  };
 }

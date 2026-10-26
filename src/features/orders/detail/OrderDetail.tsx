@@ -16,15 +16,18 @@ import { OrderNoteForm } from "./OrderNoteForm";
 import { OrderActions } from "./OrderActions";
 import { IntakeEditor } from "./IntakeEditor";
 import { useEvidenceUpload } from "./useEvidenceUpload";
+import type { Product } from "@/lib/inventory";
 
 export function OrderDetail({
   order,
   update,
   notify,
+  products,
 }: {
   order: Order;
   update: (order: Order) => void;
   notify: (message: string) => void;
+  products: Product[];
 }) {
   const contentRef = useRef<HTMLDivElement>(null);
   const [note, setNote] = useState("");
@@ -84,11 +87,14 @@ export function OrderDetail({
     });
   }
   function logChange(patch: Partial<Order>, text: string) {
-    update({
+    try { update({
       ...order,
       ...patch,
       activity: [{ text, at: new Date().toISOString() }, ...order.activity],
-    });
+    }); } catch (error) {
+      setError(error instanceof Error ? error.message : "Unable to save changes.");
+      return;
+    }
     if (patch.items && order.stage === 2) {
       notify("Stock quantities saved");
       if (patch.items.every((item) => item.stock >= item.qty)) focusTask();
@@ -138,7 +144,7 @@ export function OrderDetail({
           inspected={inspected}
           onInspect={(stage) => { setInspected(stage); setGuided(false); setError(""); }}
         />}
-        {editing && <IntakeEditor order={order} onCancel={() => {
+        {editing && <IntakeEditor order={order} products={products} onCancel={() => {
           setEditing(false);
           requestAnimationFrame(() => contentRef.current?.querySelector<HTMLButtonElement>(".detail-footer button:first-child")?.focus());
         }} onSave={(next) => {

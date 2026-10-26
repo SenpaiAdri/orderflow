@@ -6,15 +6,19 @@ The prototype assumes a small physical-goods business, a shared operations team,
 
 ## Information architecture
 
-Three workspace destinations reflect operational jobs. The interface labels Inventory as **Stock checks** and Activity as **Order history**:
+Three workspace destinations reflect operational jobs. Activity is labeled **Order history**:
 
 | Destination | User question                      | Primary information                                 |
 | ----------- | ---------------------------------- | --------------------------------------------------- |
 | Orders      | What should I work on?             | Attention, current stage, next action, delivery due |
-| Inventory   | What is blocking preparation?      | Order-specific stock requirements and shortages     |
+| Inventory   | What is blocking preparation, and what stock do we have? | Waiting stock checks and the complete product catalogue |
 | Activity    | What changed, and who approved it? | Timestamped decisions, notes, and handoffs          |
 
 The Orders screen leads with New order and a secondary Download list action. One set of queue controls provides All orders, Needs attention, Assigned to me, and Completed. Desktop uses a button group; mobile uses a native selector. Search stays visible; owner, priority, stage, and list/board settings share one Filters disclosure. Duplicate count cards and pipeline filters are removed. Each order has one action to open its next task. On phones, rows become compact cards with deadline and amount on the same row. The full timestamp remains available in the date label.
+
+Inventory keeps **Stock checks** as its initial view so order blockers remain the first task. **All stock** exposes every product, including items with no waiting orders. The catalogue shows product/SKU, available units, total demand at Stock check, an explicit shortage or out-of-stock label, and Adjust stock. Waiting orders expand within a row and link to their task; product prices appear only when adding a product or creating an order. Search and stock filters avoid adding another dashboard of counts. On phones, each product becomes a compact labeled row.
+
+Add product asks for a name, unique SKU, unit price, and opening available quantity. Adjust stock asks for the new total available and a reason, with the last adjustment behind a disclosure. Available stock excludes units already committed to orders. Replenishment updates every unreserved order; Reserve stock rechecks current availability, deducts each item once, and updates competing stock checks. An order that has passed Stock check retains its approval snapshot. The six-stage sequence and explicit reservation approval remain unchanged. This is a shared local demo balance, not a warehouse ledger.
 
 The detail dialog preserves the user's place in the queue. It keeps the order identifier and current status visible while the content scrolls. A stable handoff footer stays visible throughout stage inspection. When prerequisites are missing, its muted action guides the user to the first missing requirement. When inspecting a past step, it first returns to the current task. Intake keeps its Edit action available alongside confirmation. The owner appears beside the order identity and in the queue. On opening, keyboard focus moves to the current stage; the progress strip scrolls to keep the selected step visible on phones.
 
@@ -81,7 +85,8 @@ Completed orders download a paginated PDF rather than plain text. The report inc
 - `src/data/orders.ts`: fictional demonstration records across all six stages.
 - `src/features/orders/detail/`: contextual order workspace composed from progress, overview, items, stage-specific details, documents, history, notes, and approval actions.
 - `src/features/orders/create/`: minimal intake form and customer fields.
-- `src/features/stock/`: stock exceptions and order cards.
+- `src/features/stock/`: stock exceptions, the complete catalogue, and product/stock forms.
+- `src/lib/inventory.ts`: catalogue migration, validated stock changes, shared availability, and local reservation updates; covered by `inventory.test.ts`.
 - `src/features/activity/`: workspace history.
 - `src/features/orders/components/`: list and board views, filters, and shared status/avatar components.
 - `src/features/orders/order-filters.ts`: search, combined filters, and queue sorting, covered by public-function tests.
@@ -101,7 +106,7 @@ This prototype demonstrates workflow behavior; it is not a deployed multi-user o
 | Browser storage                  | Database, migrations, backup, retention, validated schemas                         |
 | Simulated Alex/Mia/Sam ownership | Authentication, team membership, role-based approval permissions                   |
 | Frontend transition checks       | Server-authoritative transitions, transactions, concurrency checks, idempotency    |
-| Per-order stock quantities       | Shared inventory ledger with atomic reservations and releases                      |
+| Shared local availability and reservation deductions | Server-authoritative inventory ledger with atomic reservations, releases, immutable adjustment history, and concurrency control |
 | Uploaded files in localStorage   | Object storage, access control, upload validation, scanning, signed download links |
 | Seeded payment documents         | Real receipt provenance and payment reconciliation                                 |
 | Timestamped deadlines and a browser timer | Server-side reminders, business SLA rules, and overdue automation while nobody has the app open |
@@ -109,7 +114,7 @@ This prototype demonstrates workflow behavior; it is not a deployed multi-user o
 | Confirmation dialogs             | Permission-aware approvals, rejection/rework routes, cancellation/refund policy    |
 | Sample delivery references       | Courier integration, booking state, failed delivery and return handling            |
 
-The current stock controls intentionally update an order's demo availability; they do not allocate shared warehouse inventory. The sample-evidence generator and demo messaging are removed from the interface. Previously saved sample evidence keeps its original identifying filename. None of the actions sends messages, charges money, or books a delivery.
+Stock controls update a shared browser-local available balance. They do not allocate real warehouse inventory or synchronize browsers. The catalogue retains the latest manual adjustment; affected unreserved orders also record the adjustment in their history. A full stock-movement ledger, supplier purchasing, cancellation/release policies, and product deletion are outside this feature. The sample-evidence generator and demo messaging are removed from the interface. Previously saved sample evidence keeps its original identifying filename. None of the actions sends messages, charges money, or books a delivery.
 
 Before production, validate the stage model with operators and include the exception paths the actual business needs: rejected payments, partial fulfillment, cancellations, returns, and failed delivery. Run keyboard, screen reader, mobile, and visual browser checks with representative users. Measure time to identify the next action, time to resolve a blocker, and handoff error rate.
 

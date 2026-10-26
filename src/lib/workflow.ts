@@ -86,6 +86,10 @@ export function readiness(order: Order): Readiness {
       ready: false,
       reason: "Attach proof of payment before verifying.",
     };
+  if (order.stage === 2 && (!order.items.length || order.items.some((item) =>
+    !Number.isSafeInteger(item.qty) || item.qty < 1 || !Number.isSafeInteger(item.stock) || item.stock < 0,
+  ) || new Set(order.items.map((item) => item.sku)).size !== order.items.length))
+    return { ready: false, reason: "Check valid products and quantities before reserving stock." };
   if (order.stage === 2 && order.items.some((i) => i.stock < i.qty))
     return {
       ready: false,
