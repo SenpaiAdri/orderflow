@@ -279,3 +279,20 @@
 .address-row + .field-hint {
   margin-top: 16px;
 }
+
+.required-label { color: var(--color-secondary); font-size: 13px; font-weight: 500; }
+.stage-evidence { margin-top: 16px; }
+.evidence-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-ink);
+  padding: 10px 0;
+}
+.evidence-details summary::-webkit-details-marker { display: none; }
+.evidence-details summary > span { display: flex; align-items: center; gap: 8px; }
+.evidence-details > .ui-button { margin-top: 12px; }
+input[aria-invalid="true"] { border-color: var(--attention-ink); }

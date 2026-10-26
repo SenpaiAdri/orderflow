@@ -56,7 +56,7 @@ export function OrderItems({
           if (items.some((item) => !Number.isInteger(item.stock) || item.stock < 0 || item.stock > 99999)) return;
           logChange({ items, issue: items.every((item) => item.stock >= item.qty) ? undefined : order.issue }, "Available stock updated");
         }}>
-          <h4>Update available stock</h4>
+          <h4 className="flex justify-between items-center">Update available stock <span className="required-label">Required</span></h4>
           {order.items
             .filter((i) => i.stock < i.qty)
             .map((item) => (

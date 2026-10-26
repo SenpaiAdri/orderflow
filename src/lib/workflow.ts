@@ -100,6 +100,23 @@ export function readiness(order: Order): Readiness {
     return { ready: false, reason: "Attach proof of delivery before completing this order." };
   return { ready: true, reason: "" };
 }
+export function stageEvidenceType(stage: Stage): Attachment["type"] | null {
+  return stage === 1 ? "receipt" : stage === 4 ? "delivery" : null;
+}
+
+export function attachStageEvidence(order: Order, attachment: Attachment): Order {
+  const type = stageEvidenceType(order.stage);
+  if (!type || attachment.type !== type)
+    throw new Error("This document is not accepted at the current stage.");
+  if (!attachment.name.trim() || !attachment.data)
+    throw new Error("Choose a file to attach.");
+  return {
+    ...order,
+    attachments: [...order.attachments, attachment],
+    activity: [{ text: `${attachment.name} attached by Alex Morgan`, at: new Date().toISOString() }, ...order.activity],
+  };
+}
+
 export function advanceOrder(order: Order): Order {
   const check = readiness(order);
   if (!check.ready) throw new Error(check.reason);

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { CircleAlert } from "lucide-react";
+import { ChevronDown, CircleAlert } from "lucide-react";
 import {
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { money, total, type Order, type Attachment } from "@/lib/workflow";
+import { money, total, type Order } from "@/lib/workflow";
 import { OrderAvatar } from "../components/OrderAvatar";
 import { OrderStatus } from "../components/OrderStatus";
 import { OrderProgress } from "./OrderProgress";
@@ -15,6 +15,7 @@ import { OrderHistory } from "./OrderHistory";
 import { OrderNoteForm } from "./OrderNoteForm";
 import { OrderActions } from "./OrderActions";
 import { IntakeEditor } from "./IntakeEditor";
+import { useEvidenceUpload } from "./useEvidenceUpload";
 
 export function OrderDetail({
   order,
@@ -25,44 +26,60 @@ export function OrderDetail({
   update: (order: Order) => void;
   notify: (message: string) => void;
 }) {
-  const [detailTab, setDetailTab] = useState("Overview");
   const contentRef = useRef<HTMLDivElement>(null);
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
   const [inspected, setInspected] = useState<number>(order.stage);
   const [editing, setEditing] = useState(false);
-  const [returnToStage, setReturnToStage] = useState<Attachment["type"] | null>(null);
-  const [uploadType, setUploadType] = useState<Attachment["type"]>(order.stage >= 4 ? "delivery" : "receipt");
+  const [guided, setGuided] = useState(false);
+  const uploadFocusPending = useRef(false);
+  const { fileRef, chooseFile, upload, uploading } = useEvidenceUpload({
+    order, update, notify, onError: setError, onUploaded: () => {
+      uploadFocusPending.current = true;
+      setInspected(order.stage);
+      setGuided(false);
+    },
+  });
+  useEffect(() => {
+    if (!uploading && uploadFocusPending.current) {
+      uploadFocusPending.current = false;
+      focusTask();
+    }
+  }, [uploading, order.attachments.length]);
   useEffect(() => {
     setInspected(order.stage);
-    setDetailTab("Overview");
     setEditing(false);
     setError("");
-    setReturnToStage(null);
+    setGuided(false);
     const frame = requestAnimationFrame(() => {
       const scroll = contentRef.current?.querySelector(".detail-scroll");
       if (scroll) scroll.scrollTop = 0;
       contentRef.current?.querySelector<HTMLButtonElement>(".detail-pipeline .current")?.focus();
     });
-    setUploadType(order.stage >= 4 ? "delivery" : "receipt");
     return () => cancelAnimationFrame(frame);
   }, [order.stage, order.id]);
-  function openDocuments(type: Attachment["type"]) {
-    setUploadType(type);
-    setReturnToStage(type);
-    setDetailTab("Attachments");
-    requestAnimationFrame(() => {
-      const evidence = contentRef.current?.querySelector<HTMLButtonElement>(`.attachment[data-document-type="${type}"] button:not([disabled])`);
-      const upload = contentRef.current?.querySelector<HTMLButtonElement>(".upload-box button");
-      (evidence ?? upload)?.focus();
-    });
-  }
   function focusTask() {
     requestAnimationFrame(() => {
+      const reference = !order.tracking.trim() && contentRef.current?.querySelector<HTMLInputElement>("input[name='delivery-reference']");
       const action = contentRef.current?.querySelector<HTMLButtonElement>(".detail-footer button:last-child");
-      const reference = contentRef.current?.querySelector<HTMLInputElement>("input[name='delivery-reference']");
-      const selected = contentRef.current?.querySelector<HTMLButtonElement>(".detail-pipeline .viewing");
-      (action ?? reference ?? selected)?.focus();
+      (reference || action)?.focus();
+    });
+  }
+  function resolveRequirement() {
+    setInspected(order.stage);
+    setGuided(true);
+    setError("");
+    if (order.stage === 0) { setEditing(true); return; }
+    if (order.stage === 1 || (order.stage === 4 && order.tracking.trim())) {
+      contentRef.current?.querySelector<HTMLButtonElement>("[data-evidence-upload]")?.focus();
+      chooseFile();
+      return;
+    }
+    requestAnimationFrame(() => {
+      const selector = order.stage === 2 ? ".stock-resolution input" : order.stage === 3 ? ".check-row input" : "input[name='delivery-reference']";
+      const target = contentRef.current?.querySelector<HTMLInputElement>(selector);
+      target?.focus();
+      target?.scrollIntoView({ block: "center", behavior: "smooth" });
     });
   }
   function logChange(patch: Partial<Order>, text: string) {
@@ -118,72 +135,56 @@ export function OrderDetail({
         {!editing && <OrderProgress
           stage={order.stage}
           inspected={inspected}
-          onInspect={(stage) => { setInspected(stage); setDetailTab("Overview"); setReturnToStage(null); setError(""); }}
+          onInspect={(stage) => { setInspected(stage); setGuided(false); setError(""); }}
         />}
-        {!editing && <div className="detail-tabs" role="group" aria-label="Order sections">
-          {[
-            { value: "Overview", label: "Details" },
-            { value: "Attachments", label: "Documents" },
-            { value: "Activity", label: "History" },
-          ].map(({ value, label }) => (
-            <button
-              key={value}
-              className={detailTab === value ? "active" : ""}
-              aria-pressed={detailTab === value}
-              onClick={() => { setDetailTab(value); setReturnToStage(null); setError(""); }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>}
         {editing && <IntakeEditor order={order} onCancel={() => {
           setEditing(false);
           requestAnimationFrame(() => contentRef.current?.querySelector<HTMLButtonElement>(".detail-footer button:first-child")?.focus());
         }} onSave={(next) => {
           update(next); setEditing(false); notify("Order details saved"); focusTask();
         }} />}
-        {!editing && detailTab === "Overview" && (
+        {!editing && (
           <OrderOverview
             order={order}
             inspected={inspected}
             logChange={logChange}
             update={update}
-            onDocuments={openDocuments}
+            onUpload={chooseFile}
+            uploading={uploading}
+            guided={guided}
+            error={error}
           />
         )}
-        <OrderDocuments
-          order={order}
-          active={!editing && detailTab === "Attachments"}
-          uploadType={uploadType}
-          onUploadTypeChange={setUploadType}
-          contextType={returnToStage}
-          onUploaded={(type) => {
-            if (type === returnToStage) {
-              setDetailTab("Overview");
-              setReturnToStage(null);
-              focusTask();
-            }
-          }}
-          logChange={logChange}
-          notify={notify}
-          onError={setError}
-        />
-        {!editing && detailTab === "Activity" && (
-          <OrderHistory activity={order.activity}>{noteForm}</OrderHistory>
-        )}
-        {error && (
+        {!editing && <>
+          <details className="more-details">
+            <summary>Documents <span>{order.attachments.length || ""} <ChevronDown size={15} /></span></summary>
+            <OrderDocuments attachments={order.attachments} />
+          </details>
+          <details className="more-details">
+            <summary>History <ChevronDown size={15} /></summary>
+            <OrderHistory activity={order.activity}>{noteForm}</OrderHistory>
+          </details>
+        </>}
+        <input ref={fileRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.txt" hidden
+          aria-label={order.stage === 4 ? "Upload delivery proof" : "Upload payment receipt"}
+          onChange={(event) => void upload(event.target.files?.[0])} />
+        {error && order.stage !== 1 && order.stage !== 4 && (
           <div className="inline-error" role="alert">
             <CircleAlert size={15} />
             {error}
           </div>
         )}
       </div>
-      {!editing && detailTab === "Overview" && inspected === order.stage && <OrderActions
+      {!editing && <OrderActions
         order={order}
         update={update}
         notify={notify}
         onError={setError}
         onEdit={() => setEditing(true)}
+        onResolve={resolveRequirement}
+        uploading={uploading}
+        viewingCurrent={inspected === order.stage}
+        onReturn={() => { setInspected(order.stage); setGuided(false); focusTask(); }}
       />}
     </DialogContent>
   );

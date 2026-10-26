@@ -1,43 +1,64 @@
-import { ArrowUpRight, FileCheck2, MapPin } from "lucide-react";
+import { ChevronDown, CircleAlert, FileCheck2, LoaderCircle, MapPin, Upload } from "lucide-react";
 import { DeliveryDue } from "../components/DeliveryDue";
 import { StageIcon } from "../components/OrderStatus";
 import { Button } from "@/components/ui/button";
+import { OrderDocuments } from "./OrderDocuments";
 import { money, total, type Order, type Attachment } from "@/lib/workflow";
 
-export function PaymentDetails({
-  order,
-  onDocuments,
-  editing,
-}: {
+function StageEvidence({ order, type, editing, onUpload, uploading, guided, error }: {
   order: Order;
-  onDocuments: (type: Attachment["type"]) => void;
+  type: Attachment["type"];
   editing: boolean;
+  onUpload: () => void;
+  uploading: boolean;
+  guided: boolean;
+  error: string;
+}) {
+  const files = order.attachments.filter((file) => file.type === type);
+  const label = type === "receipt" ? "Payment receipt" : "Delivery proof";
+  const action = type === "receipt" ? "Attach payment receipt" : "Attach delivery proof";
+  return (
+    <div className="stage-evidence">
+      {error && <p className="inline-error" role="alert"><CircleAlert size={15} />{error}</p>}
+      {files.length > 0 ? (
+        <details className="evidence-details" key={files.length} open={editing || undefined}>
+          <summary><span><FileCheck2 size={17} />{label} attached</span><ChevronDown size={15} /></summary>
+          <OrderDocuments attachments={files} />
+          {editing && <Button variant="outline" size="sm" disabled={uploading} data-evidence-upload onClick={onUpload}>
+            {uploading ? <LoaderCircle size={14} className="animate-spin" /> : <Upload size={14} />}
+            {uploading ? "Uploading…" : type === "receipt" ? "Attach another receipt" : "Attach another delivery proof"}
+          </Button>}
+        </details>
+      ) : editing ? (
+        <div className="evidence-row">
+          <span>{label} <span className="required-label">Required</span></span>
+          <Button size="sm" disabled={uploading} data-evidence-upload onClick={onUpload}
+            aria-describedby={guided && (type === "receipt" || order.tracking.trim()) ? "stage-requirement" : undefined}>
+            {uploading ? <LoaderCircle size={14} className="animate-spin" /> : <Upload size={14} />}
+            {uploading ? "Uploading…" : action}
+          </Button>
+        </div>
+      ) : <p className="py-3 text-secondary">{label} not recorded.</p>}
+    </div>
+  );
+}
+
+export function PaymentDetails({ order, onUpload, editing, uploading, guided, error }: {
+  order: Order;
+  onUpload: () => void;
+  editing: boolean;
+  uploading: boolean;
+  guided: boolean;
+  error: string;
 }) {
   return (
     <section className="detail-section">
-      <h3>
-        <StageIcon stage={1} size={16} />
-        {editing ? "Check payment" : "Payment summary"}
-      </h3>
+      <h3><StageIcon stage={1} size={16} />{editing ? "Check payment" : "Payment summary"}</h3>
       <div className="payment-summary">
-        <span>
-          Expected payment<strong>{money(total(order))}</strong>
-        </span>
-        <span>
-          Method<strong>Bank transfer</strong>
-        </span>
+        <span>Expected payment<strong>{money(total(order))}</strong></span>
+        <span>Method<strong>Bank transfer</strong></span>
       </div>
-      <div className="evidence-row">
-        <span>
-          <FileCheck2 size={18} />
-          {order.attachments.some((a) => a.type === "receipt")
-            ? "Payment receipt attached"
-            : "No payment receipt yet"}
-        </span>
-        <Button variant={editing && !order.attachments.some((a) => a.type === "receipt") ? "default" : "outline"} size="sm" onClick={() => onDocuments("receipt")}>
-          {order.attachments.some((a) => a.type === "receipt") ? "Review receipt" : "Attach payment receipt"} <ArrowUpRight size={13} />
-        </Button>
-      </div>
+      <StageEvidence order={order} type="receipt" editing={editing} onUpload={onUpload} uploading={uploading} guided={guided} error={error} />
     </section>
   );
 }
@@ -60,6 +81,7 @@ export function PackingConfirmation({
       <label className="check-row">
         <input
           type="checkbox"
+          required={editing}
           checked={order.prepared}
           disabled={!editing}
           onChange={(e) =>
@@ -73,6 +95,7 @@ export function PackingConfirmation({
         />
         <span>
           <strong>All items picked, checked, and packed</strong>
+          {editing && <span className="required-label block mt-1">Required</span>}
         </span>
       </label>
     </section>
@@ -83,12 +106,18 @@ export function DeliveryDetails({
   order,
   editing,
   update,
-  onDocuments,
+  onUpload,
+  uploading,
+  guided,
+  error,
 }: {
   order: Order;
   editing: boolean;
   update: (order: Order) => void;
-  onDocuments: (type: Attachment["type"]) => void;
+  onUpload: () => void;
+  uploading: boolean;
+  guided: boolean;
+  error: string;
 }) {
   return (
     <section className="detail-section">
@@ -107,9 +136,12 @@ export function DeliveryDetails({
       {editing ? (
         <>
           <label className="field-label">
-            Delivery reference
+            <span className="flex items-center justify-between">Delivery reference <span className="required-label">Required</span></span>
             <input
               name="delivery-reference"
+              required
+              aria-invalid={guided && !order.tracking.trim() || undefined}
+              aria-describedby={guided && !order.tracking.trim() ? "stage-requirement" : undefined}
               value={order.tracking}
               onChange={(e) => update({ ...order, tracking: e.target.value })}
               placeholder="e.g. LAL-8401"
@@ -119,17 +151,7 @@ export function DeliveryDetails({
       ) : order.stage >= 4 && (
         <p className="field-hint">Delivery reference: <strong>{order.tracking || "Not recorded"}</strong></p>
       )}
-      {order.stage >= 4 && <div className="evidence-row">
-            <span>
-              <FileCheck2 size={18} />
-              {order.attachments.some((a) => a.type === "delivery")
-                ? "Proof of delivery attached"
-                : "Proof of delivery needed"}
-            </span>
-            <Button variant={editing && !order.attachments.some((a) => a.type === "delivery") ? "default" : "outline"} size="sm" onClick={() => onDocuments("delivery")}>
-              {order.attachments.some((a) => a.type === "delivery") ? "Review delivery proof" : "Attach delivery proof"}
-            </Button>
-          </div>}
+      {order.stage >= 4 && <StageEvidence order={order} type="delivery" editing={editing} onUpload={onUpload} uploading={uploading} guided={guided} error={error} />}
     </section>
   );
 }

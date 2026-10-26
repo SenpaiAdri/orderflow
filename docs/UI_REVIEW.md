@@ -48,3 +48,31 @@ Intake editing now shares the action footer with confirmation. Contextual eviden
 Completion now shows its actual recorded approval timestamp, address, and reference without requiring a disclosure. Operational notes remain visible at intake, packing, and delivery; other stages keep them with supporting information. The creation icon and repeated footer status helpers were removed.
 
 Browser verification created a temporary order, corrected its quantity, uploaded a receipt, resolved a shortage, confirmed packing, uploaded delivery proof before entering its missing reference, and completed all five guarded handoffs. Completion retained all five approval records after refresh. Past payment inspection exposed its recorded approval and no current handoff. Evidence review filtered out unrelated documents; the general archive remained available. Temporary order and upload data were restored afterward. Build, 17 tests, and whitespace checks passed. This pass focused on desktop; mobile and full screen-reader testing were not repeated.
+
+
+## Direct evidence and guided handoffs
+
+This desktop refinement supersedes the earlier tab-based evidence behavior. Two independent GPT-6.1 Sol council reviewers assessed the requested flow through three rounds. Initial scores used source review; subsequent rounds used rendered screenshots and connected source. Scores are expert assessments of the prototype, not operator study results.
+
+| Reviewer | Existing flow | First implementation | Final refinement |
+| --- | --- | --- | --- |
+| A | 6.5/10 | 8.6/10 | **9.0/10** |
+| B | 7.2/10 | 9.0/10 | **9.2/10** |
+
+The initial findings were an unmarked required delivery reference, hidden blocked handoffs, extra upload navigation, and a general document selector that allowed delivery proof during Payment. The first implementation removed the section tabs, added visible requirements and direct stage-derived uploads, and kept a stable guided handoff footer. Reviewers then identified notifications covering the footer, inconsistent upload focus, and validation appearing too far from the task.
+
+Final changes:
+
+- Delivery reference, stage evidence, stock correction, and packing confirmation visibly identify required work.
+- Attach payment receipt and Attach delivery proof open the file chooser directly. The document type is automatic and enforced in the domain layer; other stages cannot upload, including while inspecting completed steps.
+- Stage work stays visible. Order information, a read-only Documents archive, and History expand below it.
+- Every unfinished stage retains its handoff. It is muted while blocked but remains operable to guide the missing requirement: intake editing, receipt chooser, shortage input, packing confirmation, delivery reference, or proof chooser. Business guards still prevent advancement.
+- Missing uploads are primary; attaching another file is secondary. Once ready, the handoff is primary. Approval still has only Go back and Confirm.
+- Upload errors sit beside evidence. Successful uploads focus the handoff or remaining delivery reference after rendering completes.
+- Compact notifications sit above desktop dialog controls. At 1280 px, a long top-right notification had covered Close; final top-center placement clears Close, header text, and the footer. Positioning the table scroll container also contains its absolute screen-reader header and prevents page overflow at that width.
+
+Root browser checks followed a temporary order through all six stages with real local test-file uploads, a shortage correction, packing confirmation, and all five approvals. Checks verified direct input activation, keyboard activation of a blocked payment/proof handoff, focused stock/packing/reference controls, invalid-file rejection without recording evidence, automatic receipt/delivery types, visible inline validation, post-upload focus, past-step read-only evidence, and refresh persistence. Desktop checks used 1440 × 1000 and 1280 × 800; the smaller viewport had no page overflow after the table fix. Original browser records were restored after testing.
+
+The reviewers inspected ten first-implementation and nine refinement screenshots. The final 1280 px screenshot used a disclosed DOM notification fixture with actual toast styles and a standard long handoff message for stable capture; separate live browser measurements confirmed no intersection with Close or the footer. Both reviewers confirmed their final scores after the responsive correction. Evidence is under `/tmp/orderflow-flow-council/` for this session.
+
+Production build, 18 domain/filter tests, and whitespace checks passed. A new domain test checks receipt, delivery, and other evidence against all six stages, rejects missing file data, and confirms accepted evidence preserves stage and records history. Mobile, full screen-reader testing, and studies with operators were not repeated in this desktop pass. Local storage and external-integration limits remain as described in README and DESIGN.

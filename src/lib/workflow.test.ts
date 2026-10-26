@@ -2,6 +2,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   advanceOrder,
+  attachStageEvidence,
+  stageEvidenceType,
   readiness,
   total,
   needsAttention,
@@ -213,4 +215,26 @@ test("deadlines use Philippine time, survive migration, and become overdue with 
   assert.equal(isOverdue(pending, Date.parse(due) - 1), false);
   assert.equal(isOverdue(pending, Date.parse(due) + 1), true);
   assert.equal(isOverdue({ ...pending, stage: 5 }, Date.parse(due) + 1), false);
+});
+
+
+test("evidence uploads accept only the document needed at the current stage", () => {
+  const receipt = { name: "receipt.txt", type: "receipt" as const, data: "data:text/plain;base64,cWE=" };
+  const proof = { ...receipt, name: "proof.txt", type: "delivery" as const };
+  for (const stage of [0, 1, 2, 3, 4, 5] as const) {
+    assert.equal(stageEvidenceType(stage), stage === 1 ? "receipt" : stage === 4 ? "delivery" : null);
+    for (const attachment of [receipt, proof, { ...receipt, type: "other" as const }]) {
+      const original = order({ stage });
+      if ((stage === 1 && attachment.type === "receipt") || (stage === 4 && attachment.type === "delivery")) {
+        const next = attachStageEvidence(original, attachment);
+        assert.equal(next.attachments.at(-1)?.type, attachment.type);
+        assert.equal(next.activity.length, 1);
+        assert.equal(next.stage, stage);
+        assert.equal(original.attachments.length, 0);
+      } else {
+        assert.throws(() => attachStageEvidence(original, attachment), /current stage/);
+      }
+    }
+  }
+  assert.throws(() => attachStageEvidence(order({ stage: 1 }), { ...receipt, data: undefined }), /Choose a file/);
 });

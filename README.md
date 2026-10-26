@@ -75,7 +75,7 @@ The existing shadcn/ui Button and Dialog primitives use Tailwind utilities, with
 - Immediate tasks shared by the list, board, and order details: resolve missing prerequisites before the handoff action. Completed steps show read-only evidence and approval summaries.
 - Payment evidence, stock shortage resolution, preparation confirmation, and delivery proof.
 - Upload and download attachments, using PDF, PNG, JPG, or text files up to 2 MB.
-- Stage evidence views show the required document type and return to the task after upload. The general Documents archive retains its type selector. Downloads are available for stored files; seeded records without a file show Original file unavailable.
+- Attach payment receipts and delivery proof directly from their stage tasks. The stage assigns the document type automatically; other stages and the read-only Documents archive cannot upload files. Downloads are available for stored files; seeded records without a file show Original file unavailable.
 - Notes, per-order history, a workspace activity feed, and inventory exceptions.
 - CSV export of the currently filtered order list; downloadable completed-order summaries.
 - Browser persistence, responsive layouts, reduced-motion support, and a search keyboard shortcut.
@@ -85,7 +85,7 @@ The existing shadcn/ui Button and Dialog primitives use Tailwind utilities, with
 1. Open **Needs attention**. Overdue work appears first, with the oldest deadline first when urgency is equal. Explain that the queue separates urgency from workflow stage.
 2. Open **ORD-1047**. Its inventory shortage blocks reservation. Enter **12** as the available mug stock and choose **Save stock quantities**. Review, reserve stock, and confirm the handoff.
 3. In Preparation, confirm the items are picked, checked, and packed. Mark ready and approve the handoff.
-4. In Delivery, enter a reference and upload a proof file through **Documents**. Complete the order and review the activity history.
+4. In Delivery, enter the required reference and choose **Attach delivery proof**. The file chooser opens directly and the evidence type is recorded automatically. Complete the order and review the activity history.
 5. Open **ORD-1043** to demonstrate a missing payment receipt, then upload a receipt file before approving payment.
 6. Create a new order. It starts at New order with only the information needed to accept it. Choose **Edit order details**, correct the address or quantity, and save. Refresh to demonstrate browser persistence.
 
@@ -108,7 +108,7 @@ Older saved delivery labels are converted once to timestamps using the date of t
 
 ## Verification
 
-Strict TypeScript checks and the production build pass. Seventeen tests cover combined list filters, attention ordering, required intake information and valid items, guarded intake corrections, next-action labels, retained approval records, deadline migration and time zones, payment proof, shortages, packing confirmation, delivery evidence, attention detection, and a full six-stage journey.
+Strict TypeScript checks and the production build pass. Eighteen tests cover combined list filters, attention ordering, required intake information and valid items, guarded intake corrections, next-action labels, retained approval records, deadline migration and time zones, stage-restricted evidence uploads, payment proof, shortages, packing confirmation, delivery evidence, attention detection, and a full six-stage journey.
 
 The October 2026 workflow fixes were checked in Chrome DevTools at desktop and an emulated 390 px mobile viewport. Checks covered attention filtering, intake corrections, missing payment proof, payment and delivery file uploads with the correct document type, stock replenishment, packing confirmation, completion, read-only stage evidence and approvals, order creation, refresh persistence, and modal keyboard focus. Mobile dates do not overlap amounts, the current step is visible in the progress strip, and the page fits without horizontal overflow. A full screen reader audit and testing with real operators remain outstanding.
 
@@ -117,3 +117,6 @@ The earlier UX simplification was checked at 1440 px and 390 px: stage filtering
 The subsequent polish removed demo chrome and sample-generation shortcuts. Browser checks verified receipt upload and approval readiness, unavailable seeded-file downloads, simplified packing details, and mobile navigation at 390 px without page overflow. Existing browser records were restored after verification.
 
 The two-round [UI review](./docs/UI_REVIEW.md) records both GPT-6.1 Sol reviewers' findings, changes, and final 9.0/10 scores. It also distinguishes screenshot/source review from browser interaction checks and outstanding operator testing.
+
+
+The latest [desktop flow review](./docs/UI_REVIEW.md#direct-evidence-and-guided-handoffs) records three council rounds ending at 9.0/10 and 9.2/10. Required fields are visible, blocked handoffs stay available to guide the missing task, and stage work stays on one screen with supporting disclosures. Browser checks covered direct uploads, invalid file rejection, required-control focus, all five handoffs, approval persistence, and notification placement at 1440 px and 1280 px. This pass did not repeat mobile or full screen-reader testing.

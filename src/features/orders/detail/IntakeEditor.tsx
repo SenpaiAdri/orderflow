@@ -25,7 +25,7 @@ export function IntakeEditor({ order, onSave, onCancel }: {
         {draft.items.length > 1 && <Button type="button" variant="ghost" size="sm"
           onClick={() => setDraft({ ...draft, items: draft.items.filter((_, i) => i !== index) })}>Remove {item.name}</Button>}
       </div>)}
-      <label className="field-label">Delivery due (Philippine time)
+      <label className="field-label">Delivery due (Philippine time) <span>*</span>
         <input required type="datetime-local" value={deliveryInput(draft.due)}
           onChange={(e) => setDraft({ ...draft, due: e.target.value ? deliveryISO(e.target.value) : "" })} />
       </label>

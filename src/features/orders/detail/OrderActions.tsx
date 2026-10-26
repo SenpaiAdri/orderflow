@@ -18,17 +18,25 @@ export function OrderActions({
   notify,
   onError,
   onEdit,
+  onResolve,
+  uploading,
+  viewingCurrent,
+  onReturn,
 }: {
   order: Order;
   update: (order: Order) => void;
   notify: (message: string) => void;
   onError: (message: string) => void;
   onEdit: () => void;
+  onResolve: () => void;
+  uploading: boolean;
+  viewingCurrent: boolean;
+  onReturn: () => void;
 }) {
   const [confirm, setConfirm] = useState(false);
   useEffect(() => {
     setConfirm(false);
-  }, [order.id, order.stage]);
+  }, [order.id, order.stage, viewingCurrent]);
   const check = readiness(order);
   function next() {
     try {
@@ -40,7 +48,6 @@ export function OrderActions({
     }
   }
 
-  if (order.stage > 0 && order.stage < 5 && !check.ready) return null;
 
   return (
     <div className="detail-footer">
@@ -83,11 +90,20 @@ export function OrderActions({
         </div>
       ) : (
         <>
-          {!check.ready && <p className="stage-validation" role="status">{check.reason}</p>}
-          {order.stage === 0 && <Button variant="outline" onClick={onEdit}>Edit order details</Button>}
+          {(!check.ready || !viewingCurrent) && <p id="stage-requirement" className="stage-validation" role="status">
+            {!viewingCurrent ? `Return to ${STAGES[order.stage]} to continue.` : check.reason}
+          </p>}
+          {order.stage === 0 && viewingCurrent && <Button variant="outline" onClick={onEdit}>Edit order details</Button>}
           <Button
-            disabled={!check.ready}
-            onClick={() => setConfirm(true)}
+            disabled={uploading}
+            aria-disabled={!check.ready || !viewingCurrent || uploading}
+            aria-describedby={!check.ready || !viewingCurrent ? "stage-requirement" : undefined}
+            data-blocked={!check.ready || !viewingCurrent || undefined}
+            onClick={() => {
+              if (!viewingCurrent) { onReturn(); return; }
+              if (!check.ready) { onResolve(); return; }
+              setConfirm(true);
+            }}
             title={check.reason || ACTIONS[order.stage]}
           >
             {ACTIONS[order.stage]}

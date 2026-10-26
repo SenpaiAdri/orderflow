@@ -171,29 +171,6 @@
   color: var(--color-secondary);
 }
 
-.detail-tabs {
-  display: flex;
-  gap: 25px;
-  border-bottom: 1px solid var(--color-line);
-  margin-bottom: 21px;
-}
-
-.detail-tabs button {
-  font-size: 13px;
-  padding: 0 0 11px;
-  display: flex;
-  gap: 6px;
-  color: var(--color-secondary);
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-}
-
-.detail-tabs button.active {
-  color: var(--color-ink);
-  border-color: var(--color-ink);
-  font-weight: 600;
-}
-
 .detail-meta {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -440,3 +417,20 @@
 }
 
 .stage-validation { flex-basis: 100%; color: var(--attention-ink); }
+
+.detail-footer .ui-button[data-blocked] {
+  background: var(--color-soft);
+  border-color: var(--color-line);
+  color: var(--color-secondary);
+  cursor: pointer;
+}
+.detail-footer .ui-button[data-blocked]:hover {
+  background: var(--color-line);
+  color: var(--color-ink);
+}
+.more-details summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.more-details > .detail-section { margin-top: 18px; }

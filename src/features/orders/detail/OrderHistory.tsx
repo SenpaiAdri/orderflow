@@ -12,7 +12,6 @@ export function OrderHistory({
 }) {
   return (
     <section className="detail-section">
-      <h3>Order history</h3>
       <div className="timeline">
         {activity.map((a, i) => (
           <div className="timeline-entry" key={`${a.at}-${i}`}>
