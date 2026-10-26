@@ -18,7 +18,6 @@ export function IntakeEditor({ order, onSave, onCancel }: {
   return (
     <form className="intake-editor" onSubmit={save}>
       <h3>Edit order details</h3>
-      <p className="field-hint">Correct the order before confirmation. Changes are recorded in history.</p>
       <CustomerFields autoFocus value={draft} onChange={(fields) => setDraft({ ...draft, ...fields })} />
       {draft.items.map((item, index) => <div key={index}>
         <OrderItemFields item={item}

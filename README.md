@@ -38,7 +38,6 @@ src/
   components/
     layout/                 # Workspace shell and sidebar
     feedback/               # Notifications
-    help/                   # Getting-started dialog
     ui/                     # Shared Button and Dialog primitives
   features/
     orders/
@@ -76,7 +75,7 @@ The existing shadcn/ui Button and Dialog primitives use Tailwind utilities, with
 - Immediate tasks shared by the list, board, and order details: resolve missing prerequisites before the handoff action. Completed steps show read-only evidence and approval summaries.
 - Payment evidence, stock shortage resolution, preparation confirmation, and delivery proof.
 - Upload and download attachments, using PDF, PNG, JPG, or text files up to 2 MB.
-- Documents offers one primary upload action and one secondary demo-evidence action. Sample files remain explicitly labeled.
+- Documents provides one upload action. Downloads are available for stored files; seeded records without a file show Original file unavailable.
 - Notes, per-order history, a workspace activity feed, and inventory exceptions.
 - CSV export of the currently filtered order list; downloadable completed-order summaries.
 - Browser persistence, responsive layouts, reduced-motion support, and a search keyboard shortcut.
@@ -86,8 +85,8 @@ The existing shadcn/ui Button and Dialog primitives use Tailwind utilities, with
 1. Open **Needs attention**. Overdue work appears first, with the oldest deadline first when urgency is equal. Explain that the queue separates urgency from workflow stage.
 2. Open **ORD-1047**. Its inventory shortage blocks reservation. Enter **12** as the available mug stock and choose **Save stock quantities**. Review, reserve stock, and confirm the handoff.
 3. In Preparation, confirm the items are picked, checked, and packed. Mark ready and approve the handoff.
-4. In Delivery, enter a reference and attach proof through **Documents**, or choose **Use demo proof** in Documents. Complete the order and review the activity history.
-5. Open **ORD-1043** to demonstrate a missing payment receipt, then add demo evidence or upload a file before approving payment.
+4. In Delivery, enter a reference and upload a proof file through **Documents**. Complete the order and review the activity history.
+5. Open **ORD-1043** to demonstrate a missing payment receipt, then upload a receipt file before approving payment.
 6. Create a new order. It starts at New order with only the information needed to accept it. Choose **Edit order details**, correct the address or quantity, and save. Refresh to demonstrate browser persistence.
 
 The Delivery stage means delivery work is in progress. Entering it after packing does not claim that a courier has dispatched the order. Dispatch booking and tracking remain outside the demo.
@@ -113,4 +112,6 @@ Strict TypeScript checks and the production build pass. Seventeen tests cover co
 
 The October 2026 workflow fixes were checked in Chrome DevTools at desktop and an emulated 390 px mobile viewport. Checks covered attention filtering, intake corrections, missing payment proof, payment and delivery file uploads with the correct document type, stock replenishment, packing confirmation, completion, read-only stage evidence and approvals, order creation, refresh persistence, and modal keyboard focus. Mobile dates do not overlap amounts, the current step is visible in the progress strip, and the page fits without horizontal overflow. A full screen reader audit and testing with real operators remain outstanding.
 
-The final UX simplification was checked at 1440 px and 390 px: stage filtering, board selection, filter dismissal and focus return, missing payment evidence, the two-action approval state, explicit stock saving, packing, delivery evidence, and completion. Temporary browser test changes were restored. Operator usability testing and a full screen reader audit remain outstanding.
+The earlier UX simplification was checked at 1440 px and 390 px: stage filtering, board selection, filter dismissal and focus return, missing payment evidence, the two-action approval state, explicit stock saving, packing, delivery evidence, and completion. Temporary browser test changes were restored. Operator usability testing and a full screen reader audit remain outstanding.
+
+The subsequent polish removed demo chrome and sample-generation shortcuts. Browser checks verified receipt upload and approval readiness, unavailable seeded-file downloads, simplified packing details, and mobile navigation at 390 px without page overflow. Existing browser records were restored after verification.

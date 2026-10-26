@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { AppLayout, type WorkspacePage } from "@/components/layout/AppLayout";
 import { Toast } from "@/components/feedback/Toast";
-import { HelpDialog } from "@/components/help/HelpDialog";
 import { OrdersPage } from "@/features/orders/OrdersPage";
 import { CreateOrder } from "@/features/orders/create/CreateOrder";
 import { OrderDetail } from "@/features/orders/detail/OrderDetail";
@@ -24,7 +23,6 @@ function App() {
   const [filters, setFilters] = useState<OrderFilters>(defaultOrderFilters);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
   const [toast, setToast] = useState("");
   const [, refreshDeadlines] = useState(0);
   useEffect(() => {
@@ -61,7 +59,6 @@ function App() {
           setPage("Orders");
           resetFilters();
         }}
-        onHelp={() => setHelpOpen(true)}
       >
         <div className="page-heading">
           <div>
@@ -72,7 +69,6 @@ function App() {
                   ? "Stock checks"
                   : "Order history"}
             </h1>
-
           </div>
           {page === "Orders" && (
             <Button onClick={() => setCreateOpen(true)}>
@@ -124,9 +120,6 @@ function App() {
           onCreate={handleCreate}
           nextId={`ORD-${Math.max(1048, ...orders.map((order) => Number(order.id.split("-")[1]) || 0)) + 1}`}
         />
-      </Dialog>
-      <Dialog open={helpOpen} onOpenChange={setHelpOpen}>
-        <HelpDialog onClose={() => setHelpOpen(false)} />
       </Dialog>
       {toast && <Toast message={toast} onDismiss={() => setToast("")} />}
     </>

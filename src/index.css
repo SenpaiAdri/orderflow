@@ -14,7 +14,6 @@
 @import "./features/orders/detail/order-documents.css";
 @import "./features/orders/detail/order-history.css";
 @import "./features/orders/create/create-order.css";
-@import "./components/help/help.css";
 @import "./features/stock/stock.css";
 @import "./features/activity/activity.css";
 @import "./features/orders/status.css";

@@ -50,25 +50,6 @@ export function OrderDetail({
       activity: [{ text, at: new Date().toISOString() }, ...order.activity],
     });
   }
-  function attachDemo(type: Attachment["type"]) {
-    logChange(
-      {
-        attachments: [
-          ...order.attachments,
-          {
-            name:
-              type === "receipt"
-                ? "Demo payment receipt.txt"
-                : "Demo delivery confirmation.txt",
-            type,
-            data: `data:text/plain;charset=utf-8,${encodeURIComponent(`ORDERFLOW DEMO EVIDENCE\nOrder: ${order.id}\nCustomer: ${order.customer}\nAmount: ${money(total(order))}\nType: ${type}\nThis document is sample evidence for prototype evaluation only.`)}`,
-          },
-        ],
-      },
-      `${type === "receipt" ? "Payment receipt" : "Delivery proof"} attached (demo)`,
-    );
-    notify("Sample evidence attached");
-  }
   function addNote(e: FormEvent) {
     e.preventDefault();
     if (!note.trim()) return;
@@ -86,9 +67,7 @@ export function OrderDetail({
       contentRef.current?.querySelector<HTMLButtonElement>(".detail-pipeline .current")?.focus();
     }}>
       <div className="detail-header">
-        <div className="detail-eyebrow">
-          {order.priority === "urgent" ? "Urgent order" : "Order details"}
-        </div>
+        {order.priority === "urgent" && <div className="detail-eyebrow">Urgent order</div>}
         <DialogTitle>
           {order.id}
           <OrderStatus stage={order.stage} />
@@ -127,10 +106,6 @@ export function OrderDetail({
               onClick={() => setDetailTab(value)}
             >
               {label}
-              {value === "Attachments" && (
-                <span>{order.attachments.length}</span>
-              )}
-              {value === "Activity" && <span>{order.activity.length}</span>}
             </button>
           ))}
         </div>}
@@ -152,7 +127,6 @@ export function OrderDetail({
           active={!editing && detailTab === "Attachments"}
           uploadType={uploadType}
           onUploadTypeChange={setUploadType}
-          attachDemo={attachDemo}
           logChange={logChange}
           notify={notify}
           onError={setError}

@@ -44,7 +44,7 @@ Completed steps show read-only information, evidence links, and their recorded a
 
 At New order, **Edit order details** reuses the intake fields to correct the customer, products, quantities, address, notes, and deadline. Saving validates the order and records the correction. Confirming intake locks those values; later changes would need a business-approved rework policy because payment and stock decisions depend on them.
 
-Stage-specific controls come before supporting information. Payment leads with the expected amount and receipt; stock checking and packing lead with the items; delivery leads with the address, reference, and proof. Payment and delivery provide contextual attachment buttons that open Documents with the correct evidence type. Demo evidence is a secondary action inside Documents, alongside the primary upload action, and remains labeled.
+Stage-specific controls come before supporting information. Payment leads with the expected amount and receipt; stock checking and packing lead with the items; delivery leads with the address, reference, and proof. Payment and delivery provide contextual attachment buttons that open Documents with the correct evidence type. Documents has one upload action. Downloading requires an actual stored file; seeded records without one show Original file unavailable. The interface does not generate sample evidence.
 
 The queue names the work needed now, such as **Confirm packing** or **Attach delivery proof**, before offering a handoff such as **Complete order**. The Delivery stage is labeled **Delivery** because entering it confirms readiness for delivery, without claiming that a courier has dispatched the order.
 
@@ -58,6 +58,7 @@ The approval footer offers one forward action with a separate confirmation. When
 - White surfaces, black primary actions, dark body text, and gray borders keep the interface neutral. Muted slate, amber, teal, purple, blue, and green connect stage badges, action links, stage filters, and order details. Light tints group statuses without coloring entire table rows. Muted red highlights overdue deliveries and urgency; amber marks deliveries due today and missing prerequisites; green marks completed delivery. Labels and explicit blocker messages keep status understandable without color.
 - Each task area has one main action and at most one secondary action. Navigation and field choices stay visually separate from task actions. Essential stage information leads; supporting details are disclosed on demand. Repeated helper copy and duplicated actions are removed.
 - Stock shortages use an explicit Save stock quantities action rather than saving when a field loses focus.
+- Workspace banners, onboarding help, repeated counters, and redundant totals are removed. Stock checks and packing focus on product identifiers and quantities rather than prices.
 - Body and table text use a system sans-serif font, with 14 px main text and a 13 px minimum for supporting text. Decorative subtitles, fabricated charts, and promotional copy are removed.
 - Search, owner, priority, and stage filters combine. An empty result provides a clear reset.
 - Intake asks for essentials first. Evidence and operational confirmations appear at the stage that needs them.
@@ -77,7 +78,7 @@ The approval footer offers one forward action with a separate confirmation. When
 - `src/features/orders/order-filters.ts`: search, combined filters, and queue sorting, covered by public-function tests.
 - `src/features/orders/useOrders.ts`: loading, saving, and updating orders using the existing browser-storage key.
 - `src/features/orders/status.css`: one muted palette for stage badges, action links, delivery dates, stage filters, and order details.
-- `src/components/layout/`, `help/`, and `feedback/`: workspace navigation, help, and notifications.
+- `src/components/layout/` and `feedback/`: workspace navigation and notifications.
 - `src/components/ui/`: reusable shadcn-style primitives using Radix.
 - `src/index.css`: Tailwind imports, theme tokens, and shared animations. Feature CSS and its responsive rules live beside the owning components; shared defaults live in `src/styles/`. Button and Dialog use Tailwind utilities in their shadcn primitives.
 - `src/App.tsx`: shared state, page selection, and dialog coordination.
@@ -99,7 +100,7 @@ This prototype demonstrates workflow behavior; it is not a deployed multi-user o
 | Confirmation dialogs             | Permission-aware approvals, rejection/rework routes, cancellation/refund policy    |
 | Sample delivery references       | Courier integration, booking state, failed delivery and return handling            |
 
-The current stock controls intentionally update an order's demo availability; they do not allocate shared warehouse inventory. Sample evidence is clearly labeled, and none of the actions sends messages, charges money, or books a delivery.
+The current stock controls intentionally update an order's demo availability; they do not allocate shared warehouse inventory. The sample-evidence generator and demo messaging are removed from the interface. Previously saved sample evidence keeps its original identifying filename. None of the actions sends messages, charges money, or books a delivery.
 
 Before production, validate the stage model with operators and include the exception paths the actual business needs: rejected payments, partial fulfillment, cancellations, returns, and failed delivery. Run keyboard, screen reader, mobile, and visual browser checks with representative users. Measure time to identify the next action, time to resolve a blocker, and handoff error rate.
 

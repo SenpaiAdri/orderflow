@@ -78,7 +78,6 @@ export function Sidebar({
             <strong>Alex Morgan</strong>
             <small>Operations manager</small>
           </span>
-          <span className="online-dot" title="Active demo user" />
         </div>
       </div>
     </aside>

@@ -16,7 +16,7 @@ export function OrderOverview({ order, inspected, logChange, update, onDocuments
 }) {
   const current = inspected === order.stage;
   const approval = stageApproval(order, inspected);
-  const items = <OrderItems order={order} checkStock={current && order.stage === 2} showStock={inspected === 2} logChange={logChange} />;
+  const items = <OrderItems order={order} checkStock={current && order.stage === 2} showStock={inspected === 2} showPrices={inspected !== 2 && inspected !== 3} logChange={logChange} />;
   const delivery = <DeliveryDetails order={order} editing={current && order.stage === 4} update={update} onDocuments={onDocuments} />;
   return (
     <>
@@ -26,7 +26,7 @@ export function OrderOverview({ order, inspected, logChange, update, onDocuments
           <div>
             <strong>{order.stage === 5 && current ? "Order complete" : `${STAGES[inspected]} completed`}</strong>
 
-            {!current && <p>{approval ? `${approval.text} · ${formatTime(approval.at)}` : "Approval details were not recorded in this older demo record."}</p>}
+            {!current && <p>{approval ? `${approval.text} · ${formatTime(approval.at)}` : "Approval record unavailable."}</p>}
           </div>
         </div>
       )}

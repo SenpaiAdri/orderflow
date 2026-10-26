@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { Download, FileText, LoaderCircle, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { money, total, type Order, type Attachment } from "@/lib/workflow";
+import type { Order, Attachment } from "@/lib/workflow";
 
 export function OrderDocuments({
   order,
@@ -11,7 +11,6 @@ export function OrderDocuments({
   onError,
   uploadType,
   onUploadTypeChange,
-  attachDemo,
 }: {
   order: Order;
   active: boolean;
@@ -20,7 +19,6 @@ export function OrderDocuments({
   onError: (message: string) => void;
   uploadType: Attachment["type"];
   onUploadTypeChange: (type: Attachment["type"]) => void;
-  attachDemo: (type: Attachment["type"]) => void;
 }) {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -65,19 +63,17 @@ export function OrderDocuments({
     }
   }
   function download(a: Attachment) {
-    const data =
-      a.data ||
-      `data:text/plain;charset=utf-8,${encodeURIComponent(`ORDERFLOW SAMPLE ATTACHMENT\n${a.name}\nOrder: ${order.id}\nCustomer: ${order.customer}\nAmount: ${money(total(order))}\nThis is a placeholder for seeded demo evidence.`)}`;
+    if (!a.data) return;
     const link = document.createElement("a");
-    link.href = data;
-    link.download = a.data ? a.name : `${a.name}.sample.txt`;
+    link.href = a.data;
+    link.download = a.name;
     link.click();
   }
 
   return (
     <section className="detail-section attachment-section" hidden={!active}>
       <h3>
-        Order attachments <span>{order.attachments.length} files</span>
+        Documents {order.attachments.length > 0 && <span>{order.attachments.length} {order.attachments.length === 1 ? "file" : "files"}</span>}
       </h3>
 
       {order.attachments.map((a, i) => (
@@ -92,19 +88,15 @@ export function OrderDocuments({
                 ? "Payment evidence"
                 : a.type === "delivery"
                   ? "Proof of delivery"
-                  : "Supporting document"}{" "}
-              ·{" "}
-              {!a.data
-                ? "Sample placeholder"
-                : a.name.startsWith("Demo")
-                  ? "Demo file"
-                  : "Uploaded file"}
+                  : "Supporting document"}
+              {!a.data && " · Original file unavailable"}
             </small>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            aria-label={`Download ${a.name}`}
+            disabled={!a.data}
+            aria-label={a.data ? `Download ${a.name}` : `Original file unavailable: ${a.name}`}
             onClick={() => download(a)}
           >
             <Download size={16} />
@@ -113,23 +105,21 @@ export function OrderDocuments({
       ))}
       {!order.attachments.length && (
         <div className="empty-attachments">
-          <FileText size={28} />
-          <p>No files attached yet.</p>
+          <p>No documents attached.</p>
         </div>
       )}
       <div className="upload-box">
-        <Upload size={22} />
-        <strong>Add a document</strong>
-        <p>PDF, JPG, PNG, or text · Up to 2 MB per file</p>
-        <select
-          aria-label="Attachment type"
-          value={uploadType}
-          onChange={(e) => onUploadTypeChange(e.target.value as Attachment["type"])}
-        >
-          <option value="receipt">Payment receipt</option>
-          <option value="delivery">Proof of delivery</option>
-          <option value="other">Other document</option>
-        </select>
+        <label className="field-label w-full">
+          Document type
+          <select
+            value={uploadType}
+            onChange={(e) => onUploadTypeChange(e.target.value as Attachment["type"])}
+          >
+            <option value="receipt">Payment receipt</option>
+            <option value="delivery">Proof of delivery</option>
+            <option value="other">Other document</option>
+          </select>
+        </label>
         <Button
           size="sm"
           disabled={uploading}
@@ -140,13 +130,9 @@ export function OrderDocuments({
           ) : (
             <Upload size={14} />
           )}
-          Choose file
+          {uploading ? "Uploading…" : "Choose file"}
         </Button>
-        {uploadType !== "other" && !order.attachments.some((a) => a.type === uploadType) && (
-          <Button variant="ghost" size="sm" disabled={uploading} onClick={() => attachDemo(uploadType)}>
-            {uploadType === "receipt" ? "Use demo receipt" : "Use demo proof"}
-          </Button>
-        )}
+        <p>PDF, JPG, PNG, or text · Up to 2 MB</p>
         <input
           ref={fileRef}
           type="file"

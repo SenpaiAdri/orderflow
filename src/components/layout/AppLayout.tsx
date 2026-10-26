@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ArrowUpRight, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Sidebar } from "./Sidebar";
 
 export type WorkspacePage = "Orders" | "Inventory" | "Activity";
@@ -9,14 +9,12 @@ export function AppLayout({
   orderCount,
   onNavigate,
   onHome,
-  onHelp,
   children,
 }: {
   page: WorkspacePage;
   orderCount: number;
   onNavigate: (page: WorkspacePage) => void;
   onHome: () => void;
-  onHelp: () => void;
   children: ReactNode;
 }) {
   const [mobileNav, setMobileNav] = useState(false);
@@ -55,21 +53,10 @@ export function AppLayout({
             <strong>Acme Operations</strong>
           </div>
           <div className="topbar-right">
-            <span className="demo-tag">
-              <span />
-              Demo workspace
-            </span>
-            <span className="topbar-divider" />
             <span className="user-avatar top-avatar">AM</span>
           </div>
         </header>
         <main>{children}</main>
-        <footer className="app-footer">
-          <span>Demo data. Changes are saved in this browser.</span>
-          <button onClick={onHelp}>
-            About this demo <ArrowUpRight size={12} />
-          </button>
-        </footer>
       </div>
     </div>
   );

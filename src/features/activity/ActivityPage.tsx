@@ -13,7 +13,6 @@ export function ActivityPage({
     <section className="activity-page">
       <div className="section-title">
         <h2>Recent activity</h2>
-        <span className="muted">All team members</span>
       </div>
       {orders
         .flatMap((o) => o.activity.map((a) => ({ ...a, order: o })))

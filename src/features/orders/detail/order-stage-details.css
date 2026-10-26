@@ -1,15 +1,3 @@
-.blocked small {
-  color: var(--color-secondary);
-}
-
-.blocked h3 {
-  color: var(--color-ink);
-}
-
-.blocked p {
-  color: var(--color-secondary);
-}
-
 .payment-summary {
   display: flex;
   gap: 50px;
@@ -56,23 +44,6 @@
   border-bottom: 1px solid var(--color-line);
 }
 
-.product-icon {
-  height: 38px;
-  width: 38px;
-  background: var(--color-canvas);
-  border: 1px solid var(--color-line);
-  border-radius: 6px;
-  color: var(--color-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.order-item:nth-child(2) .product-icon {
-  background: var(--color-canvas);
-  color: var(--color-secondary);
-}
-
 .item-info {
   flex: 1;
 }
@@ -110,19 +81,6 @@
   text-align: right;
 }
 
-.order-total {
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 0;
-  font-size: 13px;
-  color: var(--color-secondary);
-}
-
-.order-total strong {
-  font-size: 13px;
-  color: var(--color-ink);
-}
-
 .stock-resolution {
   padding: 15px;
   background: var(--color-canvas);
@@ -133,13 +91,6 @@
 .stock-resolution h4 {
   font-size: 13px;
   color: var(--color-secondary);
-}
-
-.stock-resolution p {
-  font-size: 13px;
-  color: var(--color-secondary);
-  line-height: 1.6;
-  margin: 7px 0 12px;
 }
 
 .stock-resolution label {
@@ -153,11 +104,6 @@
 
 .stock-resolution input {
   width: 90px;
-}
-
-.stock-resolution .field-hint {
-  font-size: 13px;
-  margin: 7px 0 0;
 }
 
 .address-row {
@@ -211,13 +157,6 @@
   font-size: 13px;
   color: var(--color-ink);
   font-weight: 500;
-}
-
-.check-row small {
-  display: block;
-  font-size: 13px;
-  color: var(--color-secondary);
-  margin-top: 6px;
 }
 
 .customer-note {
@@ -295,11 +234,6 @@
     min-width: 47px;
   }
 
-  .product-icon {
-    width: 30px;
-    height: 32px;
-  }
-
   .order-item {
     gap: 8px;
   }
@@ -331,8 +265,12 @@
   .order-item {
     flex-wrap: wrap;
   }
+}
 
-  .order-item .product-icon {
-    display: none;
-  }
+.stock-resolution label {
+  margin-top: 12px;
+}
+
+.stock-resolution > .ui-button {
+  margin-top: 14px;
 }
