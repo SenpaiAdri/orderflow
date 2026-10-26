@@ -1,0 +1,17 @@
+# Project-scoped Chrome DevTools MCP. Load Codex from this trusted project.
+# Runtime is pinned in package-lock.json; no npx download is needed at startup.
+[mcp_servers.chrome-devtools]
+command = "node"
+args = [
+  "node_modules/chrome-devtools-mcp/build/src/bin/chrome-devtools-mcp.js",
+  "--isolated",
+  "--no-usage-statistics",
+  "--no-performance-crux",
+  "--workspace=/home/eydriannn/my-projects/orderflow",
+]
+cwd = "/home/eydriannn/my-projects/orderflow"
+startup_timeout_sec = 30
+tool_timeout_sec = 60
+
+[mcp_servers.chrome-devtools.tools.new_page]
+approval_mode = "approve"

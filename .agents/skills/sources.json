@@ -1,0 +1,114 @@
+{
+  "retrievedAt": "2026-10-26",
+  "scope": "orderflow project",
+  "packages": [
+    {
+      "name": "chrome-devtools-mcp",
+      "version": "1.12.0",
+      "source": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+      "installedVia": "verified npm cache; package-lock.json",
+      "skills": [
+        "chrome-devtools",
+        "a11y-debugging",
+        "troubleshooting"
+      ]
+    },
+    {
+      "name": "@dietrichgebert/ponytail",
+      "version": "5.3.2",
+      "source": "https://github.com/DietrichGebert/ponytail",
+      "installedVia": "verified npm cache",
+      "skills": [
+        "ponytail",
+        "ponytail-review",
+        "ponytail-audit"
+      ]
+    },
+    {
+      "name": "mattpocock/skills",
+      "ref": "main",
+      "source": "https://github.com/mattpocock/skills",
+      "installedVia": "upstream raw Markdown via web retrieval; complete line counts verified",
+      "skills": [
+        "prototype",
+        "domain-modeling",
+        "codebase-design",
+        "tdd"
+      ],
+      "files": [
+        {
+          "path": ".agents/skills/domain-modeling/SKILL.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/domain-modeling/SKILL.md",
+          "lines": 67
+        },
+        {
+          "path": ".agents/skills/codebase-design/SKILL.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/codebase-design/SKILL.md",
+          "lines": 98
+        },
+        {
+          "path": ".agents/skills/codebase-design/DEEPENING.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/codebase-design/DEEPENING.md",
+          "lines": 30
+        },
+        {
+          "path": ".agents/skills/tdd/SKILL.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/tdd/SKILL.md",
+          "lines": 31
+        },
+        {
+          "path": ".agents/skills/tdd/tests.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/tdd/tests.md",
+          "lines": 71
+        },
+        {
+          "path": ".agents/skills/codebase-design/DESIGN-IT-TWICE.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/codebase-design/DESIGN-IT-TWICE.md",
+          "lines": 37
+        },
+        {
+          "path": ".agents/skills/prototype/SKILL.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/prototype/SKILL.md",
+          "lines": 21
+        },
+        {
+          "path": ".agents/skills/prototype/UI.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/prototype/UI.md",
+          "lines": 93
+        },
+        {
+          "path": ".agents/skills/tdd/mocking.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/tdd/mocking.md",
+          "lines": 56
+        },
+        {
+          "path": ".agents/skills/domain-modeling/ADR-FORMAT.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/domain-modeling/ADR-FORMAT.md",
+          "lines": 42
+        },
+        {
+          "path": ".agents/skills/prototype/LOGIC.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/prototype/LOGIC.md",
+          "lines": 54
+        },
+        {
+          "path": ".agents/skills/matt-pocock-LICENSE",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/LICENSE",
+          "lines": 19
+        },
+        {
+          "path": ".agents/skills/domain-modeling/GLOSSARY-FORMAT.md",
+          "url": "https://raw.githubusercontent.com/mattpocock/skills/main/skills/engineering/domain-modeling/GLOSSARY-FORMAT.md",
+          "lines": 54
+        }
+      ]
+    }
+  ],
+  "pending": [
+    {
+      "name": "Superpowers",
+      "source": "https://github.com/obra/superpowers",
+      "state": "Plugin installation offered; no connection confirmed"
+    }
+  ]
+}

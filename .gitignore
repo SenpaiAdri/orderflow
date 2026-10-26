@@ -1,0 +1,12 @@
+node_modules
+dist
+*.local
+*.tsbuildinfo
+.DS_Store
+test-results
+.aws/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
