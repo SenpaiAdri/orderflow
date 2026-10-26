@@ -1,0 +1,168 @@
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  border: 1px solid var(--color-line);
+  border-radius: 9px;
+  background: var(--color-surface);
+  text-align: left;
+  padding: 17px 18px 13px;
+  box-shadow: 0 3px 5px #00000002;
+  transition: transform 0.15s,
+    border-color 0.15s;
+  min-width: 0;
+}
+
+.summary-card:hover {
+  border-color: var(--color-line);
+  transform: translateY(-2px);
+}
+
+.summary-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--color-ink);
+}
+
+.metric-value {
+  font-size: 34px;
+  letter-spacing: -1.5px;
+  line-height: 1.2;
+  font-weight: 550;
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+  margin: 12px 0 17px;
+}
+
+@media (min-width: 1600px) {
+  .summary-card {
+    padding: 21px 24px 17px;
+  }
+
+  .summary-top {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .summary-grid {
+    gap: 11px;
+  }
+
+  .summary-card {
+    padding: 14px;
+  }
+
+  .summary-grid {
+    margin-bottom: 25px;
+  }
+
+  .metric-value {
+    font-size: 30px;
+    gap: 7px;
+  }
+}
+
+@media (max-width: 950px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .summary-card {
+    padding: 15px 17px;
+  }
+}
+
+@media (max-width: 700px) {
+  .summary-grid {
+    gap: 10px;
+  }
+
+  .summary-card {
+    padding: 13px;
+  }
+
+  .summary-top {
+    font-size: 13px;
+  }
+
+  .metric-value {
+    font-size: 30px;
+    gap: 8px;
+    margin: 10px 0 12px;
+  }
+
+  .summary-grid {
+    margin-bottom: 23px;
+  }
+}
+
+.summary-card {
+  padding: 18px 20px;
+  box-shadow: none;
+}
+
+.summary-card:hover {
+  transform: none;
+  border-color: var(--color-ink);
+}
+
+.summary-card[aria-pressed="true"] {
+  border-color: var(--color-ink);
+}
+
+.summary-top {
+  font-size: 14px;
+  color: var(--color-ink);
+  gap: 8px;
+}
+
+.summary-top svg {
+  color: var(--color-secondary);
+}
+
+.metric-value {
+  margin: 14px 0 0;
+  font-size: 36px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-value > svg {
+  color: var(--color-secondary);
+}
+
+@media (max-width: 950px) {
+  .summary-grid {
+    gap: 12px;
+  }
+
+  .summary-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 700px) {
+  .summary-top {
+    font-size: 13px;
+  }
+
+  .summary-top svg {
+    width: 17px;
+  }
+
+  .metric-value {
+    font-size: 32px;
+  }
+
+  .summary-grid {
+    margin-bottom: 12px;
+  }
+}

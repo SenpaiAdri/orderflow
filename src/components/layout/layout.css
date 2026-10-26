@@ -1,0 +1,345 @@
+h1 {
+  margin: 0;
+}
+
+.main-shell {
+  width: calc(100% - 230px);
+  margin-left: 230px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.topbar {
+  height: 73px;
+  border-bottom: 1px solid var(--color-line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-surface);
+  padding: 0 36px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 13px;
+  color: var(--color-secondary);
+}
+
+.breadcrumb strong {
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.breadcrumb svg {
+  color: var(--color-secondary);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 21px;
+}
+
+.demo-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-ink);
+}
+
+.demo-tag > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-ink);
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 19px;
+  background: var(--color-soft);
+}
+
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  color: var(--color-ink);
+}
+
+.notification {
+  position: relative;
+}
+
+.notification i {
+  position: absolute;
+  right: 6px;
+  top: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  border: 1px solid var(--color-line);
+}
+
+.top-avatar {
+  width: 30px;
+  height: 30px;
+  font-size: 13px;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+main {
+  padding: 33px 36px 15px;
+  max-width: 1700px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 29px;
+  gap: 15px;
+}
+
+h1 {
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: var(--color-ink);
+  line-height: 1.25;
+}
+
+.page-heading p {
+  color: var(--color-secondary);
+  font-size: 13px;
+  margin-top: 9px;
+  line-height: 1.6;
+}
+
+.app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 37px 20px;
+  font-size: 13px;
+  color: var(--color-secondary);
+  margin-top: auto;
+  max-width: 1700px;
+  width: 100%;
+  align-self: center;
+}
+
+.app-footer > span > span {
+  color: var(--color-secondary);
+  margin: 0 7px;
+}
+
+.app-footer button {
+  font-size: 13px;
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (min-width: 1600px) {
+  main {
+    padding-top: 42px;
+  }
+
+  .page-heading {
+    margin-bottom: 34px;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 1250px) {
+  .main-shell {
+    width: calc(100% - 205px);
+    margin-left: 205px;
+  }
+
+  .topbar {
+    padding: 0 25px;
+  }
+
+  main {
+    padding: 28px 25px 15px;
+  }
+}
+
+@media (max-width: 950px) {
+  .main-shell {
+    margin-left: 185px;
+    width: calc(100% - 185px);
+  }
+
+  main {
+    padding: 25px 20px 15px;
+  }
+
+  .topbar {
+    padding: 0 20px;
+    height: 62px;
+  }
+
+  h1 {
+    font-size: 23px;
+  }
+
+  .page-heading p {
+    font-size: 13px;
+  }
+
+  .topbar-right {
+    gap: 14px;
+  }
+
+  .app-footer {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .demo-tag {
+    font-size: 13px;
+  }
+
+  .page-heading {
+    gap: 10px;
+  }
+
+  .page-heading > .ui-button {
+    font-size: 13px;
+    min-height: 33px;
+    padding: 0 10px;
+  }
+
+  .topbar-divider {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .main-shell {
+    margin: 0;
+    width: 100%;
+  }
+
+  .mobile-menu {
+    display: flex;
+  }
+
+  .breadcrumb {
+    gap: 10px;
+  }
+
+  .topbar {
+    padding: 0 18px;
+  }
+
+  .demo-tag {
+    display: none;
+  }
+
+  .topbar-right {
+    gap: 14px;
+  }
+
+  main {
+    padding: 25px 16px 12px;
+  }
+
+  .page-heading {
+    align-items: flex-start;
+  }
+
+  .page-heading > .ui-button {
+    margin-top: 29px;
+  }
+
+  h1 {
+    font-size: 22px;
+    max-width: 245px;
+  }
+
+  .page-heading p {
+    font-size: 13px;
+    max-width: 260px;
+  }
+
+  .app-footer {
+    padding: 12px 18px 18px;
+    font-size: 13px;
+  }
+
+  .app-footer button {
+    font-size: 13px;
+  }
+}
+
+h1 {
+  font-size: 32px;
+  letter-spacing: -1px;
+}
+
+.page-heading p {
+  font-size: 15px;
+}
+
+.page-heading > .ui-button {
+  min-height: 44px;
+  font-size: 14px;
+}
+
+.icon-button {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.app-footer {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 950px) {
+  .page-heading {
+    margin-bottom: 24px;
+  }
+
+  .page-heading p {
+    max-width: 360px;
+  }
+}
+
+@media (max-width: 700px) {
+  h1 {
+    font-size: 28px;
+  }
+
+  .page-heading {
+    flex-wrap: wrap;
+  }
+
+  .page-heading > .ui-button {
+    margin-top: 0;
+  }
+
+  .page-heading p {
+    max-width: none;
+    font-size: 14px;
+  }
+}

@@ -25,7 +25,7 @@ export function AppLayout({
 }) {
   const [mobileNav, setMobileNav] = useState(false);
   return (
-    <div className="app-shell">
+    <div className="app-shell flex min-h-screen">
       {mobileNav && (
         <button
           className="nav-scrim"

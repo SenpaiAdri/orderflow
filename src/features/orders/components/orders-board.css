@@ -1,0 +1,100 @@
+.board {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  padding: 18px;
+  background: var(--color-canvas);
+  min-height: 250px;
+}
+
+.board-column {
+  width: 210px;
+  min-width: 210px;
+}
+
+.board-column > h3 {
+  font-size: 13px;
+  color: var(--color-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 15px;
+}
+
+.board-column > h3 > span:last-child {
+  margin-left: auto;
+  color: var(--color-secondary);
+  font-size: 13px;
+}
+
+.board-card {
+  display: block;
+  text-align: left;
+  width: 100%;
+  border: 1px solid var(--color-line);
+  border-radius: 7px;
+  background: var(--color-surface);
+  padding: 13px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 3px #00000003;
+}
+
+.board-card:hover {
+  border-color: var(--color-line);
+  transform: translateY(-1px);
+}
+
+.board-card > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--color-ink);
+  margin-bottom: 13px;
+}
+
+.urgent-text {
+  font-size: 13px;
+  color: var(--color-secondary);
+}
+
+.board-card .customer-cell {
+  font-size: 13px;
+  color: var(--color-ink);
+}
+
+.board-card p {
+  font-size: 13px;
+  color: var(--color-secondary);
+  margin: 13px 0;
+}
+
+.board-card footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--color-line);
+  padding-top: 9px;
+  font-size: 13px;
+  color: var(--color-secondary);
+}
+
+@media (max-width: 700px) {
+  .board {
+    padding: 13px;
+  }
+}
+
+.urgent-text {
+  font-weight: 650;
+}
+
+.board-column {
+  width: 250px;
+  min-width: 250px;
+}
+
+.board-card p {
+  color: var(--color-ink);
+  line-height: 1.6;
+}

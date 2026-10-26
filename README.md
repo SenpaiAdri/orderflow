@@ -32,6 +32,8 @@ References: [Vite guide](https://vite.dev/guide/), [shadcn Vite installation](ht
 
 ```text
 src/
+  index.css                 # CSS imports, Tailwind theme tokens, and animations
+  styles/                   # Base defaults and shared page headings/states
   App.tsx                   # Navigation, shared state, and dialogs
   components/
     layout/                 # Workspace shell and sidebar
@@ -54,6 +56,12 @@ src/
 ```
 
 Keep workflow rules in `src/lib/workflow.ts`. Feature components handle presentation and call those rules; storage keeps the existing `orderflow-demo-v1` key.
+
+## Styling
+
+`src/index.css` is the stylesheet entry point. It declares Tailwind theme tokens and imports styles in a fixed order. Feature CSS lives beside its components, including its responsive rules: sidebar and workspace layout, order summaries and filters, tables and boards, order details and documents, intake, stock, and activity. The shared stage palette remains in `src/features/orders/status.css`.
+
+The existing shadcn/ui Button and Dialog primitives use Tailwind utilities, with Button variants defined through `class-variance-authority`. Reuse those primitives and use Tailwind for simple layout and state styling. Keep feature-specific selectors in the owning CSS file. Browser defaults and focus styles live in the base layer so Tailwind utilities can override them without adding selector specificity.
 
 ## What works
 

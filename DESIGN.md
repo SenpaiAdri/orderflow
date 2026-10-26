@@ -77,6 +77,7 @@ The approval footer offers one forward action with a separate confirmation. When
 - `src/features/orders/status.css`: one muted palette for stage badges, action links, delivery dates, stage filters, and order details.
 - `src/components/layout/`, `help/`, and `feedback/`: workspace navigation, help, and notifications.
 - `src/components/ui/`: reusable shadcn-style primitives using Radix.
+- `src/index.css`: Tailwind imports, theme tokens, and shared animations. Feature CSS and its responsive rules live beside the owning components; shared defaults live in `src/styles/`. Button and Dialog use Tailwind utilities in their shadcn primitives.
 - `src/App.tsx`: shared state, page selection, and dialog coordination.
 
 ## Production boundary

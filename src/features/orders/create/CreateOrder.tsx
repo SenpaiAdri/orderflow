@@ -116,7 +116,7 @@ export function CreateOrder({
           <span>Order total</span>
           <strong>{money(item.qty * item.price)}</strong>
         </div>
-        <Button className="full-width" type="submit">
+        <Button className="w-full" type="submit">
           Create order <ArrowRight size={16} />
         </Button>
         <p className="form-caption">

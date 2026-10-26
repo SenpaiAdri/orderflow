@@ -137,7 +137,7 @@ export function OrderDocuments({
           onClick={() => fileRef.current?.click()}
         >
           {uploading ? (
-            <LoaderCircle size={14} className="spin" />
+            <LoaderCircle size={14} className="animate-spin" />
           ) : (
             <Upload size={14} />
           )}
